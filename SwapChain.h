@@ -65,11 +65,11 @@ public:
 
     VkExtent2D getExtent() const;
 
-    uint32_t getFreeImageIndex() const;
+    uint32_t getFreeImageIndex(VkFence fence, VkSemaphore semaphore) const;
 
     Image getImage(uint32_t imageIndex) const;
 
-    void queueImage(uint32_t imageIndex);
+    void queueImage(uint32_t imageIndex, std::vector<VkSemaphore>& waitSemaphores);
 
     size_t getImageCount() const;
 };

@@ -32,6 +32,10 @@ CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept
 {
 
     std::swap(commandBuffer, other.commandBuffer);
+
+    std::swap(waitSemaphores, other.waitSemaphores);
+    std::swap(waitStageFlags, other.waitStageFlags);
+    std::swap(signalSemaphores, other.signalSemaphores);
 }
 
 CommandBuffer& CommandBuffer::operator=(CommandBuffer other) noexcept
@@ -40,6 +44,9 @@ CommandBuffer& CommandBuffer::operator=(CommandBuffer other) noexcept
     std::swap(device, other.device);
     std::swap(commandPool, other.commandPool);
     std::swap(commandBuffer, other.commandBuffer);
+    std::swap(waitSemaphores, other.waitSemaphores);
+    std::swap(waitStageFlags, other.waitStageFlags);
+    std::swap(signalSemaphores, other.signalSemaphores);
 
     return *this;
 }
@@ -56,3 +63,16 @@ VkCommandBuffer& CommandBuffer::vk()
     return commandBuffer;
 }
 
+void CommandBuffer::addWaitSemaphore(VkSemaphore semaphore, VkPipelineStageFlags flags)
+{
+
+    waitSemaphores.push_back(semaphore);
+
+    waitStageFlags.push_back(flags);
+}
+
+void CommandBuffer::addSignalSemaphore(VkSemaphore semaphore)
+{
+
+    signalSemaphores.push_back(semaphore);
+}

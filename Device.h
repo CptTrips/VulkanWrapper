@@ -6,6 +6,7 @@
 #include "SwapChainSupportDetails.h"
 #include "CommandPool.h"
 #include "CommandBuffer.h"
+#include "Fence.h"
 
 #include <vector>
 
@@ -74,7 +75,7 @@ public:
 
     CommandBuffer makeSingleUseCommandBuffer();
 
-    void submitCommandBuffer(CommandBuffer& commandBuffer);
+    void submitCommandBuffer(CommandBuffer& commandBuffer, VkFence fence = VK_NULL_HANDLE);
 
     void graphicsQueueWaitIdle() const;
 

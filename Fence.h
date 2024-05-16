@@ -13,17 +13,21 @@ public:
 
     Fence(VkDevice device);
 
+    friend void swap(Fence& a, Fence& b) noexcept;
+
     Fence(const Fence&) = delete;
 
-    Fence(Fence&&) noexcept = delete; // Implement this
+    Fence(Fence&&) noexcept;
 
     Fence& operator=(const Fence&) = delete;
 
-    Fence& operator=(Fence&&) noexcept = delete; // Implement this
+    Fence& operator=(Fence&&) noexcept;
 
     ~Fence();
 
-    void wait() const;
+    void wait(uint64_t timeout = UINT64_MAX) const;
+
+    void reset() const;
 
     VkFence vk() const;
 };

@@ -50,6 +50,25 @@ QueueFamilyIndices Device::findQueueFamilies(VkPhysicalDevice physicalDevice, Vk
 	return indices;
 }
 
+void Device::submitCommandBuffer(CommandBuffer& commandBuffer, VkFence fence)
+{
+
+	vkEndCommandBuffer(commandBuffer.vk());
+
+	VkSubmitInfo submitInfo{};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffer.vk();
+
+	submitInfo.waitSemaphoreCount = commandBuffer.waitSemaphores.size();
+	submitInfo.pWaitSemaphores = commandBuffer.waitSemaphores.data();
+
+	submitInfo.signalSemaphoreCount = commandBuffer.signalSemaphores.size();
+	submitInfo.pSignalSemaphores = commandBuffer.signalSemaphores.data();
+
+	vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence);
+}
+
 /*
 void Device::createDescriptorPool(int maxFramesInFlight)
 {
@@ -172,19 +191,6 @@ CommandBuffer Device::makeSingleUseCommandBuffer()
 {
 
 	return CommandBuffer(device, commandPool);
-}
-
-void Device::submitCommandBuffer(CommandBuffer& commandBuffer)
-{
-
-	vkEndCommandBuffer(commandBuffer.vk());
-
-	VkSubmitInfo submitInfo{};
-	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &commandBuffer.vk();
-
-	vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
 }
 
 void Device::graphicsQueueWaitIdle() const

@@ -104,23 +104,19 @@ VkExtent2D SwapChain::getExtent() const
 	return extent;
 }
 
-uint32_t SwapChain::getFreeImageIndex() const
+uint32_t SwapChain::getFreeImageIndex(VkFence fence, VkSemaphore semaphore) const
 {
 
 	uint32_t imageIndex;
-
-	Fence imageAvailableFence(device->vk());
 
 	VkResult result = vkAcquireNextImageKHR(
 		device->vk(),
 		swapChain,
 		UINT64_MAX,
-		VK_NULL_HANDLE,//imageAvailableSemaphores[currentFrame],
-		imageAvailableFence.vk(),
+		semaphore,
+		fence,
 		&imageIndex
 	);
-
-	imageAvailableFence.wait();
 
 	if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
 		throw std::runtime_error("Failed to acquire swap chain image!");
@@ -135,14 +131,14 @@ Image SwapChain::getImage(uint32_t imageIndex) const
 	return Image(*device, images[imageIndex], format);
 }
 
-void SwapChain::queueImage(uint32_t imageIndex)
+void SwapChain::queueImage(uint32_t imageIndex, std::vector<VkSemaphore>& waitSemaphores)
 {
 
 	VkPresentInfoKHR presentInfo{};
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
-	presentInfo.waitSemaphoreCount = 0;
-	//presentInfo.pWaitSemaphores = &renderFinishedSemaphores[currentFrame];
+	presentInfo.waitSemaphoreCount = waitSemaphores.size();
+	presentInfo.pWaitSemaphores = waitSemaphores.data();
 
 	VkSwapchainKHR swapChains[] = {swapChain};
 	presentInfo.swapchainCount = 1;

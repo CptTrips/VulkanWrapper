@@ -2,6 +2,8 @@
 
 #include <vulkan/vulkan.h>
 
+#include <vector>
+
 class CommandBuffer
 {
 
@@ -13,6 +15,10 @@ class CommandBuffer
 
 public:
 
+    std::vector<VkSemaphore> waitSemaphores;
+    std::vector<VkPipelineStageFlags> waitStageFlags;
+    
+    std::vector<VkSemaphore> signalSemaphores;
 
     CommandBuffer(VkDevice device, VkCommandPool commandPool);
 
@@ -25,5 +31,9 @@ public:
     ~CommandBuffer();
 
     VkCommandBuffer& vk();
+
+    void addWaitSemaphore(VkSemaphore semaphore, VkPipelineStageFlags flags);
+
+    void addSignalSemaphore(VkSemaphore semaphore);
 };
 
