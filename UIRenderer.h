@@ -15,18 +15,21 @@ struct UIRendererOptions
     const GLFWWindow& window;
     const Device& device;
     const VulkanInstance& instance;
-    const SwapChain& swapChain;
+    VkFormat swapChainFormat;
+    uint32_t swapChainSize;
 
     UIRendererOptions(
         const GLFWWindow& window,
         const Device& device,
         const VulkanInstance& instance,
-        const SwapChain& swapChain
+        VkFormat swapChainFormat,
+        uint32_t swapChainSize
     )
         : window(window)
         , device(device)
         , instance(instance)
-        , swapChain(swapChain)
+        , swapChainFormat(swapChainFormat)
+        , swapChainSize(swapChainSize)
     {}
 };
 

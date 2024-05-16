@@ -6,7 +6,7 @@ PipelineBarrier::PipelineBarrier(PipelineStage before, PipelineStage after)
 {
 }
 
-void PipelineBarrier::layoutTransition(CommandBuffer& commandBuffer, Image& image) const
+void PipelineBarrier::layoutTransition(CommandBuffer& commandBuffer, const Image& image) const
 {
 
 	VkImageMemoryBarrier barrier{};

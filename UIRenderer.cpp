@@ -36,11 +36,9 @@ UIRenderer::UIRenderer(const UIRendererOptions& options)
 
     VkPipelineRenderingCreateInfo pipelineRenderingInfo{};
 
-    VkFormat colorAttachmentFormat = options.swapChain.getFormat();
-
     pipelineRenderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
     pipelineRenderingInfo.colorAttachmentCount = 1;
-    pipelineRenderingInfo.pColorAttachmentFormats = &colorAttachmentFormat;
+    pipelineRenderingInfo.pColorAttachmentFormats = &options.swapChainFormat;
 
 	ImGui::StyleColorsDark();
     ImGui_ImplVulkan_InitInfo init_info {};
@@ -52,7 +50,7 @@ UIRenderer::UIRenderer(const UIRendererOptions& options)
     init_info.DescriptorPool = descriptorPool.vk();
     init_info.UseDynamicRendering = true;
     init_info.MinImageCount = options.device.querySwapChainSupport().capabilities.minImageCount;
-    init_info.ImageCount = static_cast<uint32_t>(options.swapChain.getImageCount());
+    init_info.ImageCount = options.swapChainSize;
     init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
     init_info.PipelineRenderingCreateInfo = pipelineRenderingInfo;
     //init_info.CheckVkResultFn = check_vk_result;

@@ -2,15 +2,15 @@
 
 #include <stdexcept>
 
-Semaphore::Semaphore(const Device& device)
-    : device(device.vk())
+Semaphore::Semaphore(VkDevice device)
+    : device(device)
 {
 
     VkSemaphoreCreateInfo createInfo{};
 
     createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-    if (vkCreateSemaphore(device.vk(), &createInfo, nullptr, &semaphore) != VK_SUCCESS)
+    if (vkCreateSemaphore(device, &createInfo, nullptr, &semaphore) != VK_SUCCESS)
         throw std::runtime_error("Failed to create semaphore");
 }
 

@@ -22,6 +22,6 @@ class PipelineBarrier
 public:
     PipelineBarrier(PipelineStage before, PipelineStage after);
 
-    void layoutTransition(CommandBuffer& commandBuffer, Image& image) const;
+    void layoutTransition(CommandBuffer& commandBuffer, const Image& image) const;
 };
 

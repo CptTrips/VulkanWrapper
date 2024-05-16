@@ -62,6 +62,7 @@ void Device::submitCommandBuffer(CommandBuffer& commandBuffer, VkFence fence)
 
 	submitInfo.waitSemaphoreCount = commandBuffer.waitSemaphores.size();
 	submitInfo.pWaitSemaphores = commandBuffer.waitSemaphores.data();
+	submitInfo.pWaitDstStageMask = commandBuffer.waitStageFlags.data();
 
 	submitInfo.signalSemaphoreCount = commandBuffer.signalSemaphores.size();
 	submitInfo.pSignalSemaphores = commandBuffer.signalSemaphores.data();
