@@ -86,10 +86,15 @@ void CommandBuffer::addSignalSemaphore(VkSemaphore semaphore)
     signalSemaphores.push_back(semaphore);
 }
 
-void CommandBuffer::reset() const
+void CommandBuffer::reset()
 {
 
     vkResetCommandBuffer(commandBuffer, 0);
+
+    waitSemaphores.clear();
+    waitStageFlags.clear();
+
+    signalSemaphores.clear();
 
     begin(false);
 }

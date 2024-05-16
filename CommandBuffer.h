@@ -36,7 +36,7 @@ public:
 
     VkCommandBuffer& vk();
 
-    void reset() const;
+    void reset();
 
     void addWaitSemaphore(VkSemaphore semaphore, VkPipelineStageFlags flags);
 
