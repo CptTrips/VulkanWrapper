@@ -194,6 +194,27 @@ CommandBuffer Device::makeSingleUseCommandBuffer()
 	return CommandBuffer(device, commandPool);
 }
 
+std::vector<CommandBuffer> Device::makeCommandBuffers(uint32_t size, bool singleUse) const
+{
+
+	std::vector<VkCommandBuffer> vkCommandBuffers(size);
+
+	VkCommandBufferAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandPool = commandPool;
+    allocInfo.commandBufferCount = size;
+
+    vkAllocateCommandBuffers(device, &allocInfo, vkCommandBuffers.data());
+
+	std::vector<CommandBuffer> commandBuffers;
+
+	for (auto vkCommandBuffer : vkCommandBuffers)
+        commandBuffers.emplace_back(device, commandPool, vkCommandBuffer, singleUse);
+
+    return commandBuffers;
+}
+
 void Device::graphicsQueueWaitIdle() const
 {
 

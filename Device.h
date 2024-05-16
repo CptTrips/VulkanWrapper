@@ -75,6 +75,8 @@ public:
 
     CommandBuffer makeSingleUseCommandBuffer();
 
+    std::vector<CommandBuffer> makeCommandBuffers(uint32_t size, bool singleUse) const;
+
     void submitCommandBuffer(CommandBuffer& commandBuffer, VkFence fence = VK_NULL_HANDLE);
 
     void graphicsQueueWaitIdle() const;

@@ -3,7 +3,7 @@
 #include <utility>
 #include <stdexcept>
 
-CommandBuffer::CommandBuffer(VkDevice device, VkCommandPool commandPool)
+CommandBuffer::CommandBuffer(VkDevice device, VkCommandPool commandPool, bool singleUse)
     : device(device)
     , commandPool(commandPool)
     , commandBuffer()
@@ -17,18 +17,27 @@ CommandBuffer::CommandBuffer(VkDevice device, VkCommandPool commandPool)
 
     vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
 
-	VkCommandBufferBeginInfo beginInfo{};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    begin(singleUse);
+}
 
-    if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
-		throw std::runtime_error("failed to begin recording command buffer!");
-	
+CommandBuffer::CommandBuffer(
+    VkDevice device,
+    VkCommandPool commandPool,
+    VkCommandBuffer commandBuffer,
+    bool singleUse
+)
+    : device(device)
+    , commandPool(commandPool)
+    , commandBuffer(commandBuffer)
+{
+
+    begin(singleUse);
 }
 
 CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept
     : device(other.device)
     , commandPool(other.commandPool)
+    , commandBuffer(VK_NULL_HANDLE)
 {
 
     std::swap(commandBuffer, other.commandBuffer);
@@ -75,4 +84,29 @@ void CommandBuffer::addSignalSemaphore(VkSemaphore semaphore)
 {
 
     signalSemaphores.push_back(semaphore);
+}
+
+void CommandBuffer::reset() const
+{
+
+    vkResetCommandBuffer(commandBuffer, 0);
+
+    begin(false);
+}
+
+void CommandBuffer::begin(bool singleUse) const
+{
+
+	VkCommandBufferBeginInfo beginInfo{};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+    VkCommandBufferUsageFlags flags{};
+
+    if (singleUse)
+        flags = flags | VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        
+	beginInfo.flags = flags;
+
+    if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
+		throw std::runtime_error("failed to begin recording command buffer!");
 }

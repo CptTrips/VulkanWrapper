@@ -13,6 +13,8 @@ class CommandBuffer
 
     CommandBuffer() = default;
 
+    void begin(bool singleUse) const;
+
 public:
 
     std::vector<VkSemaphore> waitSemaphores;
@@ -20,7 +22,9 @@ public:
     
     std::vector<VkSemaphore> signalSemaphores;
 
-    CommandBuffer(VkDevice device, VkCommandPool commandPool);
+    CommandBuffer(VkDevice device, VkCommandPool commandPool, bool singleUse = true);
+
+    CommandBuffer(VkDevice device, VkCommandPool commandPool, VkCommandBuffer commandBuffer, bool singleUse);
 
     CommandBuffer(const CommandBuffer&) = delete;
 
@@ -31,6 +35,8 @@ public:
     ~CommandBuffer();
 
     VkCommandBuffer& vk();
+
+    void reset() const;
 
     void addWaitSemaphore(VkSemaphore semaphore, VkPipelineStageFlags flags);
 
