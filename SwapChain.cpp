@@ -16,8 +16,8 @@ void SwapChain::acquireSwapChainImages()
 }
 
 
-SwapChain::SwapChain(Device& device, const Surface& surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode)
-	: SwapChain(device, makeSwapChainOptions(device, surface.getVkSurface(), window, preferredPresentMode))
+SwapChain::SwapChain(Device& device, const Surface& surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode, uint32_t imageCount)
+	: SwapChain(device, makeSwapChainOptions(device, surface.getVkSurface(), window, preferredPresentMode, imageCount))
 {
 }
 
@@ -162,7 +162,7 @@ size_t SwapChain::getImageCount() const
 	return images.size();
 }
 
-SwapChainOptions SwapChain::makeSwapChainOptions(Device& device, VkSurfaceKHR surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode) const
+SwapChainOptions SwapChain::makeSwapChainOptions(Device& device, VkSurfaceKHR surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode, uint32_t imageCount) const
 {
 
 	SwapChainOptions options;
@@ -175,7 +175,10 @@ SwapChainOptions SwapChain::makeSwapChainOptions(Device& device, VkSurfaceKHR su
 
 	options.presentMode = chooseSwapPresentMode(swapChainSupport.presentModes, preferredPresentMode);
 
-	options.imageCount = swapChainSupport.capabilities.minImageCount + 1;
+	options.imageCount = imageCount;
+
+	if (swapChainSupport.capabilities.minImageCount > 0 && options.imageCount < swapChainSupport.capabilities.minImageCount)
+		options.imageCount = swapChainSupport.capabilities.minImageCount;
 
 	if (swapChainSupport.capabilities.maxImageCount > 0 && options.imageCount > swapChainSupport.capabilities.maxImageCount)
 		options.imageCount = swapChainSupport.capabilities.maxImageCount;
