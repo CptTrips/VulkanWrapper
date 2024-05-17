@@ -16,8 +16,8 @@ void SwapChain::acquireSwapChainImages()
 }
 
 
-SwapChain::SwapChain(Device& device, const Surface& surface, const GLFWWindow& window)
-	: SwapChain(device, makeSwapChainOptions(device, surface.getVkSurface(), window))
+SwapChain::SwapChain(Device& device, const Surface& surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode)
+	: SwapChain(device, makeSwapChainOptions(device, surface.getVkSurface(), window, preferredPresentMode))
 {
 }
 
@@ -162,7 +162,7 @@ size_t SwapChain::getImageCount() const
 	return images.size();
 }
 
-SwapChainOptions SwapChain::makeSwapChainOptions(Device& device, VkSurfaceKHR surface, const GLFWWindow& window) const
+SwapChainOptions SwapChain::makeSwapChainOptions(Device& device, VkSurfaceKHR surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode) const
 {
 
 	SwapChainOptions options;
@@ -173,7 +173,7 @@ SwapChainOptions SwapChain::makeSwapChainOptions(Device& device, VkSurfaceKHR su
 
 	options.extent = chooseSwapExtent(swapChainSupport.capabilities, window);
 
-	options.presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
+	options.presentMode = chooseSwapPresentMode(swapChainSupport.presentModes, preferredPresentMode);
 
 	options.imageCount = swapChainSupport.capabilities.minImageCount + 1;
 
@@ -203,11 +203,11 @@ VkSurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat(const std::vector<VkSurfac
 	return VkSurfaceFormatKHR();
 }
 
-VkPresentModeKHR SwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) const
+VkPresentModeKHR SwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes, VkPresentModeKHR preferredPresentMode) const
 {
 
 	for (const auto& availablePresentMode : availablePresentModes) {
-		if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+		if (availablePresentMode == preferredPresentMode) {
 			return availablePresentMode;
 		}
 	}

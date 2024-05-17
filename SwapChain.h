@@ -33,11 +33,11 @@ class SwapChain
     VkFormat format;
     VkExtent2D extent;
 
-    SwapChainOptions makeSwapChainOptions(Device& device, VkSurfaceKHR surface, const GLFWWindow& window) const;
+    SwapChainOptions makeSwapChainOptions(Device& device, VkSurfaceKHR surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode) const;
 
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) const;
 
-	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) const;
+	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes, VkPresentModeKHR preferredPresentMode) const;
 
 	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, const GLFWWindow& window) const;
 
@@ -45,7 +45,7 @@ class SwapChain
 
 public:
 
-    SwapChain(Device& device, const Surface& surface, const GLFWWindow& window);
+    SwapChain(Device& device, const Surface& surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode);
 
     SwapChain(Device& device, SwapChainOptions options);
 

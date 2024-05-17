@@ -173,6 +173,17 @@ SwapChainSupportDetails Device::querySwapChainSupport() const
 		vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &formatCount, details.formats.data());
 	}
 
+	uint32_t presentModeCount;
+	vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, nullptr);
+
+	if (presentModeCount)
+	{
+
+		details.presentModes.resize(presentModeCount);
+
+		vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &formatCount, details.presentModes.data());
+	}
+
 	return details;
 }
 
