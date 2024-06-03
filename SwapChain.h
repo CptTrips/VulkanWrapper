@@ -45,7 +45,7 @@ class SwapChain
 
 public:
 
-    SwapChain(Device& device, const Surface& surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode, uint32_t imageCount);
+    SwapChain(Device& device, const Surface& surface, const GLFWWindow& window, uint32_t imageCount, VkPresentModeKHR preferredPresentMode = VK_PRESENT_MODE_FIFO_KHR);
 
     SwapChain(Device& device, SwapChainOptions options);
 

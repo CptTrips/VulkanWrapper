@@ -16,7 +16,7 @@ void SwapChain::acquireSwapChainImages()
 }
 
 
-SwapChain::SwapChain(Device& device, const Surface& surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode, uint32_t imageCount)
+SwapChain::SwapChain(Device& device, const Surface& surface, const GLFWWindow& window, uint32_t imageCount, VkPresentModeKHR preferredPresentMode)
 	: SwapChain(device, makeSwapChainOptions(device, surface.getVkSurface(), window, preferredPresentMode, imageCount))
 {
 }
