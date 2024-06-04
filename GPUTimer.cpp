@@ -1,5 +1,7 @@
 #include "GPUTimer.h"
 
+#include <vector>
+
 void GPUTimer::writeTimestamp(CommandBuffer& commandBuffer, uint32_t timerID, VkPipelineStageFlags pipelineStages) const
 {
 
@@ -14,6 +16,9 @@ GPUTimer::GPUTimer(const Device& device, uint32_t timerCount)
     , units(device.getPhysicalDeviceProperties().limits.timestampPeriod)
 {
 
+    std::vector<CommandBuffer> commandBuffers{ device.makeCommandBuffers(1, true) };
+
+    vkCmdResetQueryPool(commandBuffers[0].vk(), queryPool.vk(), 0, 2u * timerCount);
 }
 
 void GPUTimer::startTimer(CommandBuffer& commandBuffer, uint32_t timerID, VkPipelineStageFlags pipelineStages) const
