@@ -154,6 +154,7 @@
     <ClInclude Include="Image.h" />
     <ClInclude Include="PipelineBarrier.h" />
     <ClInclude Include="PipelineLayout.h" />
+    <ClInclude Include="QueryPool.h" />
     <ClInclude Include="QueueFamilyIndices.h" />
     <ClInclude Include="Semaphore.h" />
     <ClInclude Include="Shader.h" />
@@ -189,6 +190,7 @@
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="PipelineBarrier.cpp" />
     <ClCompile Include="PipelineLayout.cpp" />
+    <ClCompile Include="QueryPool.cpp" />
     <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
