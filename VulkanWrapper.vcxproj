@@ -149,6 +149,7 @@
     <ClInclude Include="Fence.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GLFWWindow.h" />
+    <ClInclude Include="GPUTimer.h" />
     <ClInclude Include="GraphicsPipeline.h" />
     <ClInclude Include="GraphicsPipelineBuilder.h" />
     <ClInclude Include="Image.h" />
@@ -185,6 +186,7 @@
     <ClCompile Include="Fence.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GLFWWindow.cpp" />
+    <ClCompile Include="GPUTimer.cpp" />
     <ClCompile Include="GraphicsPipeline.cpp" />
     <ClCompile Include="GraphicsPipelineBuilder.cpp" />
     <ClCompile Include="Image.cpp" />
