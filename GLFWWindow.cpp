@@ -23,8 +23,6 @@ GLFWWindow::GLFWWindow(const uint32_t height, const uint32_t width, const bool r
 
 	glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 
-	std::cout << "Window creation" << std::endl;
-
 }
 
 GLFWWindow& GLFWWindow::operator=(GLFWWindow other)
@@ -46,10 +44,7 @@ GLFWWindow::~GLFWWindow()
 	{
 		glfwDestroyWindow(window);
 
-		std::cout << "Window destruction " << window << std::endl;
-
 		glfwTerminate();
-		std::cout << "glfwTerminate" << std::endl;
 	}
 
 }
@@ -70,8 +65,6 @@ std::vector<const char*> GLFWWindow::extensions()
 	const char** glfwExtensions;
 
 	glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-	std::cout << glfwExtensionCount << " GLFW required extensions." << std::endl;
 
 	return std::vector<const char*>(glfwExtensions, glfwExtensions + glfwExtensionCount);
 }
