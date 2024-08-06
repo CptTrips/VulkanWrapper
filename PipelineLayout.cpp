@@ -8,7 +8,7 @@ PipelineLayout::PipelineLayout(const Device& device, const std::vector<VkDescrip
 
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	pipelineLayoutInfo.setLayoutCount = 1;
+	pipelineLayoutInfo.setLayoutCount = descriptorSetLayouts.size();
 	pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
 	pipelineLayoutInfo.pushConstantRangeCount = pushConstantRanges.size();
 	pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data();
