@@ -1,13 +1,23 @@
 #include "Shader.h"
 #include <stdexcept>
 
-Shader::Shader(const Device& device, const std::vector<char>& code, VkShaderStageFlagBits stage, const std::vector<DescriptorSetLayout>& descriptorSetLayouts, std::vector<VkPushConstantRange> pushConstantRanges)
+void Shader::createDescriptorSetLayouts(const Device& device, const std::vector<std::vector<VkDescriptorSetLayoutBinding>>& descriptorSetLayoutBindings)
+{
+
+	for (const auto& bindings : descriptorSetLayoutBindings)
+		descriptorSetLayouts.emplace_back(device, bindings);
+
+}
+
+Shader::Shader(const Device& device, const std::vector<char>& code, VkShaderStageFlagBits stage, const std::vector<std::vector<VkDescriptorSetLayoutBinding>>& descriptorSetLayoutBindings, std::vector<VkPushConstantRange> pushConstantRanges)
 	: device(device.vk())
 	, module()
 	, stage(stage)
-	, descriptorSetLayouts(descriptorSetLayouts)
+	, descriptorSetLayouts()
 	, pushConstantRanges(pushConstantRanges)
 {
+
+	createDescriptorSetLayouts(device, descriptorSetLayoutBindings);
 
 	VkShaderModuleCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;

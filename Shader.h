@@ -16,12 +16,16 @@ class Shader
 
     VkShaderStageFlagBits stage;
 
-    const std::vector<DescriptorSetLayout>& descriptorSetLayouts;
+    std::vector<DescriptorSetLayout> descriptorSetLayouts;
 
     std::vector<VkPushConstantRange> pushConstantRanges;
 
+protected:
+    void createDescriptorSetLayouts(const Device& device, const std::vector<std::vector<VkDescriptorSetLayoutBinding>>& descriptorSetLayoutBindings);
+
 public:
-    Shader(const Device& device, const std::vector<char>& code, VkShaderStageFlagBits stage, const std::vector<DescriptorSetLayout>& descriptorSetLayouts, std::vector<VkPushConstantRange> pushConstantRanges);
+
+    Shader(const Device& device, const std::vector<char>& code, VkShaderStageFlagBits stage, const std::vector<std::vector<VkDescriptorSetLayoutBinding>>& descriptorSetLayoutBindings, std::vector<VkPushConstantRange> pushConstantRanges);
 
     ~Shader();
 
