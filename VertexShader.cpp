@@ -1,20 +1,16 @@
 #include "VertexShader.h"
 
-VertexShader::VertexShader(const Device& device, const std::vector<char>& code, VkShaderStageFlagBits stage, const std::vector<std::vector<VkDescriptorSetLayoutBinding>>& descriptorSetLayoutBindings, std::vector<VkVertexInputBindingDescription> vertexBindings, std::vector<VkVertexInputAttributeDescription> attributeDescriptions, std::vector<VkPushConstantRange> pushConstantRanges)
-    : Shader(device, code, stage, descriptorSetLayoutBindings, pushConstantRanges)
+VertexShader::VertexShader(
+    const Device& device,
+    const std::vector<char>& code,
+    VkShaderStageFlagBits stage,
+    const std::vector<VkDescriptorSetLayoutBinding>& bindings,
+    const std::vector<VkPushConstantRange>& pushConstantRanges,
+    const std::vector<VkVertexInputBindingDescription>& vertexBindings,
+    const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions
+)
+    : Shader(device, code, stage, bindings, pushConstantRanges)
     , vertexBindings(vertexBindings)
     , attributeDescriptions(attributeDescriptions)
 {
-}
-
-std::vector<VkVertexInputBindingDescription>& VertexShader::getVertexBindings()
-{
-
-    return vertexBindings;
-}
-
-std::vector<VkVertexInputAttributeDescription>& VertexShader::getAttributeDescriptions()
-{
-
-    return attributeDescriptions;
 }

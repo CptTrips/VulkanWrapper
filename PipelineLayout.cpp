@@ -2,6 +2,32 @@
 
 #include <stdexcept>
 
+std::vector<VkDescriptorSetLayout> PipelineLayout::getDescriptorSetLayouts(const std::vector<Shader const*> shaders) const
+{
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
+
+	for (Shader const* shader : shaders)
+		descriptorSetLayouts.push_back(shader->descriptorSetLayout.vk());
+
+	return descriptorSetLayouts;
+}
+
+std::vector<VkPushConstantRange> PipelineLayout::getPushConstantRanges(const std::vector<Shader const*> shaders) const
+{
+	std::vector<VkPushConstantRange> pushConstantRanges;
+
+	for (Shader const* shader : shaders)
+		for (const auto& pcr : shader->pushConstantRanges)
+			pushConstantRanges.push_back(pcr);
+
+	return pushConstantRanges;
+}
+
+PipelineLayout::PipelineLayout(const Device& device, std::vector<Shader const*> shaders)
+	: PipelineLayout(device, getDescriptorSetLayouts(shaders), getPushConstantRanges(shaders))
+{
+}
+
 PipelineLayout::PipelineLayout(const Device& device, const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts, const std::vector<VkPushConstantRange>& pushConstantRanges)
 	: device(device.vk())
 {

@@ -5,16 +5,20 @@
 class VertexShader : public Shader
 {
 
-    std::vector<VkVertexInputBindingDescription> vertexBindings;
-
-    std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
-
 public:
 
-    VertexShader(const Device& device, const std::vector<char>& code, VkShaderStageFlagBits stage, const std::vector<std::vector<VkDescriptorSetLayoutBinding>>& descriptorSetLayoutBindings, std::vector<VkVertexInputBindingDescription> vertexBindings, std::vector<VkVertexInputAttributeDescription> attributeDescriptions, std::vector<VkPushConstantRange> pushConstantRanges);
+    const std::vector<VkVertexInputBindingDescription>& vertexBindings;
 
-    std::vector<VkVertexInputBindingDescription>& getVertexBindings();
+    const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions;
 
-    std::vector<VkVertexInputAttributeDescription>& getAttributeDescriptions();
+    VertexShader(
+        const Device& device,
+        const std::vector<char>& code,
+        VkShaderStageFlagBits stage,
+        const std::vector<VkDescriptorSetLayoutBinding>& bindings,
+        const std::vector<VkPushConstantRange>& pushConstantRanges,
+        const std::vector<VkVertexInputBindingDescription>& vertexBindings,
+        const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions
+    );
 };
 

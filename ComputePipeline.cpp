@@ -2,10 +2,12 @@
 
 #include <stdexcept>
 
-ComputePipeline::ComputePipeline(Device& device, Shader& computeShader)
+#include "ShaderReader.h"
+
+ComputePipeline::ComputePipeline(Device& device, const Shader& shader)
     : device(device.vk())
     , pipeline()
-    , pipelineLayout(device, computeShader.getDescriptorSetLayoutsVk(), computeShader.getPushConstantRanges())
+    , pipelineLayout(device, { &shader })
 {
 
     VkComputePipelineCreateInfo pipelineInfo{};
@@ -14,13 +16,14 @@ ComputePipeline::ComputePipeline(Device& device, Shader& computeShader)
 
     //pipelineInfo.flags = 0;
 
-    pipelineInfo.stage = computeShader.getPipelineShaderStageCreateInfo();
+    pipelineInfo.stage = shader.getPipelineShaderStageCreateInfo();
 
     pipelineInfo.layout = pipelineLayout.vk();
 
     if (vkCreateComputePipelines(device.vk(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS)
         throw std::runtime_error("Compute pipeline creation failed");
 }
+
 
 ComputePipeline::~ComputePipeline()
 {

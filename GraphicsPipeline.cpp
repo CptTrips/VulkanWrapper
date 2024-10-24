@@ -4,10 +4,10 @@
 
 #include <stdexcept>
 
-GraphicsPipeline::GraphicsPipeline(Device& device, VkFormat colourFormat, VertexShader& vertexShader, Shader& fragmentShader)
+GraphicsPipeline::GraphicsPipeline(Device& device, const VertexShader& vertexShader, const Shader& fragmentShader, VkFormat colourFormat)
     : device(device.vk())
     , pipeline()
-    , pipelineLayout(device, concatVectors(vertexShader.getDescriptorSetLayoutsVk(), fragmentShader.getDescriptorSetLayoutsVk()), concatVectors(vertexShader.getPushConstantRanges(), fragmentShader.getPushConstantRanges()))
+    , pipelineLayout(device, {&vertexShader, &fragmentShader})
 {
 
 	VkPipelineRenderingCreateInfo pipelineRenderingCreateInfo{};
@@ -19,8 +19,8 @@ GraphicsPipeline::GraphicsPipeline(Device& device, VkFormat colourFormat, Vertex
         vertexShader.getPipelineShaderStageCreateInfo(), fragmentShader.getPipelineShaderStageCreateInfo()
     };
 
-	auto bindingDescriptions = vertexShader.getVertexBindings();
-	auto attributeDescriptions = vertexShader.getAttributeDescriptions();
+	auto bindingDescriptions = vertexShader.vertexBindings;
+	auto attributeDescriptions = vertexShader.attributeDescriptions;
 
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;

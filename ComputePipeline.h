@@ -19,7 +19,7 @@ class ComputePipeline
     PipelineLayout pipelineLayout;
 
 public:
-    ComputePipeline(Device& device, Shader& computeShader);
+    ComputePipeline(Device& device, const Shader& shader);
 
     ~ComputePipeline();
 
