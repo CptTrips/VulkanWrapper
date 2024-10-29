@@ -104,7 +104,7 @@ VulkanInstance::VulkanInstance(
 	if (result != VK_SUCCESS)
 		throw std::runtime_error("VkInstance creation failed");
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	db_messenger = VulkanDebugMessenger(instance);
 #endif
 
