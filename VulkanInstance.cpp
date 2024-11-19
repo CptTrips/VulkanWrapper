@@ -113,7 +113,7 @@ VulkanInstance::VulkanInstance(
 VulkanInstance::~VulkanInstance()
 {
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	db_messenger.destroy(instance);
 #endif
 
