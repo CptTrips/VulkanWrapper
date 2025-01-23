@@ -14,7 +14,6 @@ public:
     VertexShader(
         const Device& device,
         const std::vector<char>& code,
-        VkShaderStageFlagBits stage,
         const std::vector<VkDescriptorSetLayoutBinding>& bindings,
         const std::vector<VkPushConstantRange>& pushConstantRanges,
         const std::vector<VkVertexInputBindingDescription>& vertexBindings,
