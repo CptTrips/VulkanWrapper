@@ -69,7 +69,7 @@ public:
 
     Image getImage(uint32_t imageIndex) const;
 
-    void queueImage(uint32_t imageIndex, std::vector<VkSemaphore>& waitSemaphores);
+    void queueImage(uint32_t imageIndex, std::vector<VkSemaphore> waitSemaphores);
 
     size_t getImageCount() const;
 };

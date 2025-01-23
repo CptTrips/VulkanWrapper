@@ -131,7 +131,7 @@ Image SwapChain::getImage(uint32_t imageIndex) const
 	return Image(*device, images[imageIndex], format);
 }
 
-void SwapChain::queueImage(uint32_t imageIndex, std::vector<VkSemaphore>& waitSemaphores)
+void SwapChain::queueImage(uint32_t imageIndex, std::vector<VkSemaphore> waitSemaphores)
 {
 
 	VkPresentInfoKHR presentInfo{};

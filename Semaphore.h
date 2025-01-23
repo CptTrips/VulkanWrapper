@@ -2,6 +2,8 @@
 
 #include <vulkan/vulkan.h>
 
+#include "Device.h"
+
 class Semaphore
 {
 
@@ -10,7 +12,7 @@ class Semaphore
     VkSemaphore semaphore;
 
 public:
-    Semaphore(VkDevice device);
+    Semaphore(const Device& device);
 
     Semaphore(const Semaphore& other) = delete;
 
