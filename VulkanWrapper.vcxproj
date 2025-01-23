@@ -147,6 +147,7 @@
     <ClInclude Include="DeviceBuffer.h" />
     <ClInclude Include="DeviceMemory.h" />
     <ClInclude Include="Fence.h" />
+    <ClInclude Include="FragmentShader.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GLFWWindow.h" />
     <ClInclude Include="GPUTimer.h" />
@@ -157,6 +158,7 @@
     <ClInclude Include="PipelineLayout.h" />
     <ClInclude Include="QueryPool.h" />
     <ClInclude Include="QueueFamilyIndices.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Semaphore.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderCompiler.h" />
@@ -168,6 +170,7 @@
     <ClInclude Include="SwapChainSupportDetails.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VertexShader.h" />
+    <ClInclude Include="VulkanContext.h" />
     <ClInclude Include="VulkanDebugMessenger.h" />
     <ClInclude Include="VulkanInstance.h" />
   </ItemGroup>
@@ -184,6 +187,7 @@
     <ClCompile Include="DeviceBuffer.cpp" />
     <ClCompile Include="DeviceMemory.cpp" />
     <ClCompile Include="Fence.cpp" />
+    <ClCompile Include="FragmentShader.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GLFWWindow.cpp" />
     <ClCompile Include="GPUTimer.cpp" />
@@ -193,6 +197,7 @@
     <ClCompile Include="PipelineBarrier.cpp" />
     <ClCompile Include="PipelineLayout.cpp" />
     <ClCompile Include="QueryPool.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
@@ -203,6 +208,7 @@
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="VertexShader.cpp" />
+    <ClCompile Include="VulkanContext.cpp" />
     <ClCompile Include="VulkanDebugMessenger.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
   </ItemGroup>
