@@ -35,7 +35,7 @@ public:
 
 	void copy(DeviceBuffer& src);
 
-	void upload(void* data, size_t size);
+	void upload(void* data);
 
 	VkBuffer vk() const;
 
