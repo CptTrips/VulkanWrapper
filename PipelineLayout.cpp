@@ -1,6 +1,7 @@
 #include "PipelineLayout.h"
 
 #include <stdexcept>
+#include <utility>
 
 std::vector<VkDescriptorSetLayout> PipelineLayout::getDescriptorSetLayouts(const std::vector<Shader const*> shaders) const
 {
@@ -44,10 +45,19 @@ PipelineLayout::PipelineLayout(const Device& device, const std::vector<VkDescrip
 	}
 }
 
+PipelineLayout::PipelineLayout(PipelineLayout&& other) noexcept
+{
+
+	device = other.device;
+
+	std::swap(layout, other.layout);
+}
+
 PipelineLayout::~PipelineLayout()
 {
 
-	vkDestroyPipelineLayout(device, layout, nullptr);
+	if (layout != VK_NULL_HANDLE)
+        vkDestroyPipelineLayout(device, layout, nullptr);
 }
 
 VkPipelineLayout PipelineLayout::vk() const

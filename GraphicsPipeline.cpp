@@ -3,8 +3,9 @@
 #include "ShaderReader.h"
 
 #include <stdexcept>
+#include <utility>
 
-GraphicsPipeline::GraphicsPipeline(Device& device, const VertexShader& vertexShader, const Shader& fragmentShader, VkFormat colourFormat)
+GraphicsPipeline::GraphicsPipeline(Device& device, const VertexShader& vertexShader, const Shader& fragmentShader, VkFormat colourFormat, VkPrimitiveTopology topology)
     : device(device.vk())
     , pipeline()
     , pipelineLayout(device, {&vertexShader, &fragmentShader})
@@ -31,7 +32,7 @@ GraphicsPipeline::GraphicsPipeline(Device& device, const VertexShader& vertexSha
 
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
 	inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+	inputAssembly.topology = topology;
 	inputAssembly.primitiveRestartEnable = VK_FALSE;
 
 	VkPipelineViewportStateCreateInfo viewportState{};
@@ -116,6 +117,13 @@ GraphicsPipeline::GraphicsPipeline(Device& device, const VertexShader& vertexSha
 		vkCreateGraphicsPipelines(device.vk(), nullptr, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS
 		)
             throw std::runtime_error("failed to create graphics pipeline!");
+}
+
+GraphicsPipeline::GraphicsPipeline(GraphicsPipeline&& other) noexcept
+	: device(other.device)
+	, pipeline(std::move(other.pipeline))
+	, pipelineLayout(std::move(other.pipelineLayout))
+{
 }
 
 GraphicsPipeline::~GraphicsPipeline()

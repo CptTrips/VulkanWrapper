@@ -24,6 +24,8 @@ public:
 
     PipelineLayout(const Device& device, const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts, const std::vector<VkPushConstantRange>& pushConstantRanges);
 
+    PipelineLayout(PipelineLayout&& other) noexcept;
+
     ~PipelineLayout();
 
     VkPipelineLayout vk() const;

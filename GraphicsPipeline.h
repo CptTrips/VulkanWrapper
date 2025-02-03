@@ -21,7 +21,9 @@ class GraphicsPipeline
     static std::vector<T> concatVectors(const std::vector<T>& a, const std::vector<T>& b);
 
 public:
-    GraphicsPipeline(Device& device, const VertexShader& vertexShader, const Shader& fragmentShader, VkFormat colourFormat);
+    GraphicsPipeline(Device& device, const VertexShader& vertexShader, const Shader& fragmentShader, VkFormat colourFormat, VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+
+    GraphicsPipeline(GraphicsPipeline&&) noexcept;
 
     ~GraphicsPipeline();
 
