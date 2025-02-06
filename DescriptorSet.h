@@ -24,5 +24,7 @@ public:
     DescriptorSet(VkDevice device, VkDescriptorSet descriptorSet, const std::vector<Descriptor>& descriptors);
 
     void bind(CommandBuffer& commandBuffer, VkPipelineBindPoint bindPoint, const PipelineLayout& pipelineLayout) const;
+
+    VkDescriptorSet vk() const;
 };
 

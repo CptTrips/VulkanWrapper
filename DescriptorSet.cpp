@@ -27,3 +27,8 @@ void DescriptorSet::bind(CommandBuffer& commandBuffer, VkPipelineBindPoint bindP
 
 	vkCmdBindDescriptorSets(commandBuffer.vk(), VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout.vk(), 0, 1, &descriptorSet, 0, nullptr);
 }
+
+VkDescriptorSet DescriptorSet::vk() const
+{
+	return descriptorSet;
+}

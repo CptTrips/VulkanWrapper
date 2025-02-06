@@ -2,6 +2,8 @@
 
 #include <vulkan/vulkan.h>
 
+#include <algorithm>
+
 #include "CommandBuffer.h"
 #include "Vertex.h"
 #include "ShaderReader.h"
@@ -46,7 +48,7 @@ std::vector<PipelineBarrier> Renderer::createPipelineBarriers() const
 	return pipelineBarriers;
 }
 
-void Renderer::recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, DeviceBuffer& vertexBuffer, DeviceBuffer& indexBuffer, const Image & image)
+void Renderer::recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, DeviceBuffer& vertexBuffer, DeviceBuffer& indexBuffer, const Image & image, const std::vector<DescriptorSet>& descriptorSets)
 {
 
 	pipelineBarriers[0].layoutTransition(commandBuffer, image);
@@ -57,6 +59,8 @@ void Renderer::recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, Device
 
 	bindObjects(commandBuffer, vertexBuffer, indexBuffer);
 
+	bindDescriptorSets(commandBuffer, descriptorSets);
+
 	setDomain(commandBuffer, renderDomain);
 
 	drawIndexed(commandBuffer, static_cast<uint32_t>(indexBuffer.size() / sizeof(uint32_t)));
@@ -64,6 +68,19 @@ void Renderer::recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, Device
 	vkCmdEndRendering(commandBuffer.vk());
 
 	pipelineBarriers[1].layoutTransition(commandBuffer, image);
+}
+
+void Renderer::bindDescriptorSets(CommandBuffer& commandBuffer, const std::vector<DescriptorSet>& descriptorSets)
+{
+
+	if (descriptorSets.empty())
+		return;
+
+	std::vector<VkDescriptorSet> descriptorSetsVk(descriptorSets.size());
+
+	std::transform(descriptorSets.begin(), descriptorSets.end(), descriptorSetsVk.begin(), [](const DescriptorSet& descriptorSet) { return descriptorSet.vk();  });
+
+	vkCmdBindDescriptorSets(commandBuffer.vk(), VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getLayout().vk(), 0, descriptorSetsVk.size(), descriptorSetsVk.data(), 0, nullptr);
 }
 
 void Renderer::beginRendering(CommandBuffer & commandBuffer, const Image & image, VkRect2D renderDomain) const

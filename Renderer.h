@@ -86,8 +86,6 @@ private:
 
     GraphicsPipeline graphicsPipeline;
 
-    //std::unique_ptr<DeviceBuffer> vertexBuffer, indexBuffer;
-
     VkExtent2D renderDomain;
 
     std::vector<PipelineBarrier> createPipelineBarriers() const;
@@ -100,10 +98,12 @@ private:
 
     void drawIndexed(CommandBuffer& commandBuffer, uint32_t indexCount) const;
 
+    void bindDescriptorSets(CommandBuffer& commandBuffer, const std::vector<DescriptorSet>& descriptorSets);
+
 public:
 
     Renderer(RendererOptions options);
 
-    void recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, DeviceBuffer& vertexBuffer, DeviceBuffer& indexBuffer, const Image & image);
+    void recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, DeviceBuffer& vertexBuffer, DeviceBuffer& indexBuffer, const Image& image, const std::vector<DescriptorSet>& descriptorSets = {});
 };
 

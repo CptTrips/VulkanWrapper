@@ -28,6 +28,8 @@ public:
     ~GraphicsPipeline();
 
     void bind(CommandBuffer& commandBuffer) const;
+
+    PipelineLayout& getLayout();
 };
 
 template<typename T>

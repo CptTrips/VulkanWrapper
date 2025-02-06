@@ -137,3 +137,9 @@ void GraphicsPipeline::bind(CommandBuffer& commandBuffer) const
 
 	vkCmdBindPipeline(commandBuffer.vk(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 }
+
+PipelineLayout& GraphicsPipeline::getLayout()
+{
+
+	return pipelineLayout;
+}
