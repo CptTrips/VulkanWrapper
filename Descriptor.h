@@ -19,6 +19,8 @@ private:
 
     std::vector<VkDescriptorBufferInfo> bufferInfos;
 
+    std::vector<VkDescriptorImageInfo> imageInfos;
+
     int dstElem{ 0 };
 
 public:
@@ -28,6 +30,8 @@ public:
     Descriptor(const VkDescriptorSetLayoutBinding& binding, std::vector<VkDescriptorBufferInfo> bufferInfos);
 
     Descriptor(const VkDescriptorSetLayoutBinding& binding, std::vector<const DeviceBuffer*> buffers);
+
+    Descriptor(const VkDescriptorSetLayoutBinding& binding, std::vector<VkDescriptorImageInfo> imageInfos);
 
     VkWriteDescriptorSet getDescriptorWrite(VkDescriptorSet descriptorSet) const;
 };

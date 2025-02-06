@@ -41,10 +41,21 @@ Descriptor::Descriptor(const VkDescriptorSetLayoutBinding& binding, std::vector<
         throw std::runtime_error("Descriptor count does not match buffer count");
 }
 
+Descriptor::Descriptor(const VkDescriptorSetLayoutBinding& binding, std::vector<VkDescriptorImageInfo> imageInfos)
+    : binding(binding)
+    , imageInfos(imageInfos)
+{
+
+    if (binding.descriptorCount != imageInfos.size())
+        throw std::runtime_error("Descriptor count does not match image count");
+}
+
 Descriptor::Descriptor(const VkDescriptorSetLayoutBinding& binding, std::vector<const DeviceBuffer*> buffers)
     : Descriptor(binding, extractBufferInfos(buffers))
 {
 
+    if (binding.descriptorCount != buffers.size())
+        throw std::runtime_error("Descriptor count does not match buffer count");
 }
 
 VkWriteDescriptorSet Descriptor::getDescriptorWrite(VkDescriptorSet descriptorSet) const
@@ -58,7 +69,8 @@ VkWriteDescriptorSet Descriptor::getDescriptorWrite(VkDescriptorSet descriptorSe
     descriptorWrite.dstArrayElement = dstElem;
     descriptorWrite.descriptorType = binding.descriptorType;
     descriptorWrite.descriptorCount = binding.descriptorCount;
-    descriptorWrite.pBufferInfo = bufferInfos.data();
+    descriptorWrite.pBufferInfo = (bufferInfos.size()) ? bufferInfos.data() : nullptr;
+    descriptorWrite.pImageInfo = (imageInfos.size()) ? imageInfos.data() : nullptr;
 
 	return descriptorWrite;
 }
