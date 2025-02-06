@@ -1,5 +1,7 @@
 #include "Image.h"
 
+#include "PipelineBarrier.h"
+
 #include <stdexcept>
 
 void Image::createImageView(VkFormat format)
@@ -135,6 +137,20 @@ void Image::copyBuffer(const DeviceBuffer& buffer)
 {
 
 	CommandBuffer commandBuffer{ device.makeSingleUseCommandBuffer() };
+
+    PipelineStage pipelineStageInitial{};
+	pipelineStageInitial.layout = VK_IMAGE_LAYOUT_UNDEFINED;
+	pipelineStageInitial.accessFlags = 0;
+	pipelineStageInitial.stageFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+
+    PipelineStage pipelineStageTransferDst{};
+	pipelineStageTransferDst.layout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	pipelineStageTransferDst.accessFlags = VK_ACCESS_TRANSFER_WRITE_BIT;
+	pipelineStageTransferDst.stageFlags = VK_PIPELINE_STAGE_TRANSFER_BIT;
+
+	PipelineBarrier barrier(pipelineStageInitial, pipelineStageTransferDst);
+
+	barrier.layoutTransition(commandBuffer, *this);
 
 	VkBufferImageCopy region{};
 
