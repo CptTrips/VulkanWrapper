@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 
 #include <unordered_set>
+#include <unordered_map>
 #include <vector>
 
 #include "Device.h"
@@ -20,11 +21,12 @@ class DescriptorPool
 
 public:
     DescriptorPool(const Device& device, const std::unordered_set<VkDescriptorType>& descriptorTypes, uint32_t descriptorSetCount);
+    DescriptorPool(const Device& device, std::unordered_map<VkDescriptorType, uint32_t> descriptorTypesCounts, uint32_t descriptorSetCount);
 
     ~DescriptorPool();
 
     VkDescriptorPool vk() const;
 
-    std::vector<DescriptorSet> makeDescriptorSets(const std::vector<DescriptorSetInfo>& descriptorSetInfos) const;
+    std::vector<DescriptorSet> makeDescriptorSets(const std::vector<DescriptorSetLayout*>& descriptorSetLayouts) const;
 };
 

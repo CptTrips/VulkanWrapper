@@ -88,6 +88,8 @@ private:
 
     VkExtent2D renderDomain;
 
+    DescriptorPool descriptorPool;
+
     std::vector<PipelineBarrier> createPipelineBarriers() const;
 
     void beginRendering(CommandBuffer& commandBuffer, const Image& image, VkRect2D renderDomain) const;
@@ -100,10 +102,14 @@ private:
 
     void bindDescriptorSets(CommandBuffer& commandBuffer, const std::vector<DescriptorSet>& descriptorSets);
 
+    std::vector<DescriptorSet> descriptorSets;
+
 public:
 
     Renderer(RendererOptions options);
 
-    void recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, DeviceBuffer& vertexBuffer, DeviceBuffer& indexBuffer, const Image& image, const std::vector<DescriptorSet>& descriptorSets = {});
+    void recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, DeviceBuffer& vertexBuffer, DeviceBuffer& indexBuffer, const Image& image, uint32_t descriptorSetIndex);
+
+    void updateDescriptorSet(uint32_t descriptorSetIndex, uint32_t binding, std::vector<VkDescriptorImageInfo> imageInfos, std::vector<VkDescriptorBufferInfo> bufferInfos);
 };
 

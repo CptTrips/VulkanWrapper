@@ -4,14 +4,20 @@
 
 #include "Device.h"
 #include "DeviceMemory.h"
+#include "DeviceBuffer.h"
+#include "Sampler.h"
 
 class Image
 {
 
-    VkDevice device;
+    Device& device;
+
+    VkExtent3D extent;
 
     VkImage image;
     VkImageView imageView;
+
+    Sampler sampler;
 
     DeviceMemory memory;
 
@@ -20,6 +26,8 @@ class Image
     void createImageView(VkFormat format);
 
     void bindMemory(DeviceMemory& memory);
+
+    void fill(void* data);
 
 public:
 
@@ -32,7 +40,6 @@ public:
         VkFormat format,
         VkImageTiling tiling,
         VkImageUsageFlags usage,
-        VkMemoryPropertyFlags properties,
         Device& device
     );
 
@@ -51,5 +58,11 @@ public:
     VkMemoryRequirements getMemoryRequirements() const;
 
     ~Image();
+
+    void copyBuffer(const DeviceBuffer& buffer);
+
+    void upload(void* data);
+
+    VkDescriptorImageInfo imageInfo() const;
 };
 

@@ -1,25 +1,9 @@
 #include "DescriptorSet.h"
 
-void DescriptorSet::writeDescriptors(const std::vector<Descriptor>& descriptors)
-{
-
-	std::vector<VkWriteDescriptorSet> descriptorWrites(descriptors.size());
-
-	for (int i = 0; i < descriptors.size(); i++)
-	{
-
-		descriptorWrites[i] = descriptors[i].getDescriptorWrite(descriptorSet);
-	}
-
-	vkUpdateDescriptorSets(device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
-}
-
-DescriptorSet::DescriptorSet(VkDevice device, VkDescriptorSet descriptorSet, const std::vector<Descriptor>& descriptors)
+DescriptorSet::DescriptorSet(VkDevice device, VkDescriptorSet descriptorSet)
 	: device(device)
 	, descriptorSet(descriptorSet)
 {
-
-	writeDescriptors(descriptors);
 }
 
 void DescriptorSet::bind(CommandBuffer& commandBuffer, VkPipelineBindPoint bindPoint, const PipelineLayout& pipelineLayout) const

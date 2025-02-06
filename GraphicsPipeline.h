@@ -15,6 +15,8 @@ class GraphicsPipeline
 
     VkPipeline pipeline;
 
+    DescriptorSetLayout descriptorSetLayout;
+
     PipelineLayout pipelineLayout;
 
     template <typename T>
@@ -29,7 +31,9 @@ public:
 
     void bind(CommandBuffer& commandBuffer) const;
 
-    PipelineLayout& getLayout();
+    PipelineLayout& getPipelineLayout();
+
+    DescriptorSetLayout& getDescriptorSetLayout();
 };
 
 template<typename T>

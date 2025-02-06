@@ -43,6 +43,28 @@ DescriptorPool::DescriptorPool(const Device& device, const std::unordered_set<Vk
 		throw std::runtime_error("failed to create descriptor pool!");
 	}
 }
+DescriptorPool::DescriptorPool(const Device& device, std::unordered_map<VkDescriptorType, uint32_t> descriptorTypesCounts, uint32_t descriptorSetCount)
+	: device(device.vk())
+	, pool()
+{
+
+	std::vector<VkDescriptorPoolSize> poolSizes;
+
+	for (const auto& kv : descriptorTypesCounts)
+		poolSizes.push_back({ kv.first, kv.second * descriptorSetCount });
+
+	VkDescriptorPoolCreateInfo poolInfo{};
+	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+	poolInfo.pPoolSizes = poolSizes.data();
+	poolInfo.maxSets = descriptorSetCount;
+
+	if (vkCreateDescriptorPool(device.vk(), &poolInfo, nullptr, &pool) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create descriptor pool!");
+	}
+}
+
 DescriptorPool::~DescriptorPool()
 {
 
@@ -55,20 +77,20 @@ VkDescriptorPool DescriptorPool::vk() const
 	return pool;
 }
 
-std::vector<DescriptorSet> DescriptorPool::makeDescriptorSets(const std::vector<DescriptorSetInfo>& descriptorSetInfos) const
+std::vector<DescriptorSet> DescriptorPool::makeDescriptorSets(const std::vector<DescriptorSetLayout*>& descriptorSetLayouts) const
 {
 
 	std::vector<VkDescriptorSetLayout> layouts;
 
-	for (const DescriptorSetInfo& info : descriptorSetInfos)
-		layouts.push_back(info.descriptorSetLayout->vk());
+	for (const DescriptorSetLayout* layout : descriptorSetLayouts)
+		layouts.push_back(layout->vk());
 
 	std::vector<VkDescriptorSet> vkDescriptorSets{ allocateDescriptorSets(layouts) };
 
 	std::vector<DescriptorSet> descriptorSets;
 
 	for (size_t i{ 0 }; i < vkDescriptorSets.size(); i++)
-		descriptorSets.emplace_back(device, vkDescriptorSets[i], descriptorSetInfos[i].descriptors);
+		descriptorSets.push_back({ device, vkDescriptorSets[i] });
 
 	return descriptorSets;
 }

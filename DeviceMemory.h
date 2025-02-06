@@ -9,6 +9,7 @@ class DeviceMemory
 
     VkDevice device;
     VkDeviceMemory memory;
+    VkDeviceSize m_size;
 
 public:
 
@@ -16,7 +17,7 @@ public:
 
     DeviceMemory(VkDevice device);
 
-    DeviceMemory(Device& device, VkMemoryRequirements memRequirements);
+    DeviceMemory(Device& device, VkMemoryRequirements memRequirements, VkMemoryPropertyFlags memProperties);
 
     DeviceMemory(const DeviceMemory&) = delete;
 
@@ -25,6 +26,10 @@ public:
     DeviceMemory& operator=(DeviceMemory&& other) noexcept;
 
     ~DeviceMemory();
+
+    void fill(void* data);
+
+    VkDeviceSize size() const;
 
     VkDeviceMemory vk() const;
 };

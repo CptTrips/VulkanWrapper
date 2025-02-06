@@ -17,11 +17,9 @@ class DescriptorSet
 
     VkDescriptorSet descriptorSet;
 
-    void writeDescriptors(const std::vector<Descriptor>& descriptors);
-
 public:
 
-    DescriptorSet(VkDevice device, VkDescriptorSet descriptorSet, const std::vector<Descriptor>& descriptors);
+    DescriptorSet(VkDevice device, VkDescriptorSet descriptorSet);
 
     void bind(CommandBuffer& commandBuffer, VkPipelineBindPoint bindPoint, const PipelineLayout& pipelineLayout) const;
 

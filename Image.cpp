@@ -16,7 +16,7 @@ void Image::createImageView(VkFormat format)
     createInfo.subresourceRange.baseArrayLayer = 0;
     createInfo.subresourceRange.layerCount = 1;
 
-    if (vkCreateImageView(device, &createInfo, nullptr, &imageView) != VK_SUCCESS)
+    if (vkCreateImageView(device.vk(), &createInfo, nullptr, &imageView) != VK_SUCCESS)
         throw std::runtime_error("failed to create texture image view!");
 }
 
@@ -27,22 +27,21 @@ Image::Image(
 	VkFormat format,
 	VkImageTiling tiling,
 	VkImageUsageFlags usage,
-	VkMemoryPropertyFlags properties,
     Device& device
 )
-	: device(device.vk())
+	: device(device)
+	, extent{ width, height, 1 }
 	, image()
 	, imageView()
+	, sampler(device)
 	, wasCreated(true)
-	, memory(VK_NULL_HANDLE)
+	, memory(device.vk())
 {
 
 	VkImageCreateInfo imageInfo{};
 	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageInfo.imageType = VK_IMAGE_TYPE_2D;
-	imageInfo.extent.width = static_cast<uint32_t>(width);
-	imageInfo.extent.height = static_cast<uint32_t>(height);
-	imageInfo.extent.depth = 1;
+	imageInfo.extent = extent;
 	imageInfo.mipLevels = mipLevels;
 	imageInfo.arrayLayers = 1;
 	imageInfo.format = format;
@@ -56,7 +55,7 @@ Image::Image(
 		throw std::runtime_error("failed to create image!");
 	}
 
-	memory = DeviceMemory(device, getMemoryRequirements());
+	memory = DeviceMemory(device, getMemoryRequirements(), VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
 	bindMemory(memory);
 
@@ -64,9 +63,10 @@ Image::Image(
 }
 
 Image::Image(Device& device, VkImage image, VkFormat format)
-	: device(device.vk())
+	: device(device)
     , image(image)
 	, imageView()
+	, sampler(device)
 	, wasCreated(false)
 	, memory(device.vk())
 {
@@ -75,11 +75,12 @@ Image::Image(Device& device, VkImage image, VkFormat format)
 }
 
 Image::Image(Image&& other) noexcept
-	: device()
+	: device(other.device)
 	, image()
 	, imageView()
+	, sampler(other.device)
 	, wasCreated(false)
-	, memory(other.device)
+	, memory(other.device.vk())
 {
 
 	swap(*this, other);
@@ -110,7 +111,7 @@ VkMemoryRequirements Image::getMemoryRequirements() const
 
 	VkMemoryRequirements memoryRequirements;
 
-	vkGetImageMemoryRequirements(device, image, &memoryRequirements);
+	vkGetImageMemoryRequirements(device.vk(), image, &memoryRequirements);
 
 	return memoryRequirements;
 }
@@ -118,22 +119,76 @@ VkMemoryRequirements Image::getMemoryRequirements() const
 void Image::bindMemory(DeviceMemory& memory)
 {
 
-	vkBindImageMemory(device, image, memory.vk(), 0);
+	vkBindImageMemory(device.vk(), image, memory.vk(), 0);
 }
 
 Image::~Image()
 {
 
-    vkDestroyImageView(device, imageView, nullptr);
+    vkDestroyImageView(device.vk(), imageView, nullptr);
 
 	if (wasCreated)
-		vkDestroyImage(device, image, nullptr);
+		vkDestroyImage(device.vk(), image, nullptr);
+}
+
+void Image::copyBuffer(const DeviceBuffer& buffer)
+{
+
+	CommandBuffer commandBuffer{ device.makeSingleUseCommandBuffer() };
+
+	VkBufferImageCopy region{};
+
+    region.bufferOffset = 0;
+    region.bufferRowLength = 0;
+    region.bufferImageHeight = 0;
+
+	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    region.imageSubresource.mipLevel = 0;
+    region.imageSubresource.baseArrayLayer = 0;
+    region.imageSubresource.layerCount = 1;
+
+	region.imageOffset = { 0, 0, 0 };
+	region.imageExtent = extent;
+
+	vkCmdCopyBufferToImage(commandBuffer.vk(), buffer.vk(), image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+	device.submitCommandBuffer(commandBuffer);
+
+	device.graphicsQueueWaitIdle();
+}
+
+void Image::upload(void* data)
+{
+
+    DeviceBuffer stagingBuffer(extent.height * extent.width * extent.depth * 4, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, device);
+
+    stagingBuffer.fill(data);
+
+    copyBuffer(stagingBuffer);
+}
+
+VkDescriptorImageInfo Image::imageInfo() const
+{
+
+    VkDescriptorImageInfo imageInfo{};
+
+	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	imageInfo.imageView = imageView;
+	imageInfo.sampler = sampler.vk();
+
+    return imageInfo;
+}
+
+void Image::fill(void* data)
+{
+
+	memory.fill(data);
 }
 
 void swap(Image& a, Image& b)
 {
 
-	std::swap(a.device, b.device);
+	swap(a.device, b.device);
 	std::swap(a.image, b.image);
 	std::swap(a.imageView, b.imageView);
 	swap(a.memory, b.memory);

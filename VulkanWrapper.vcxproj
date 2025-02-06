@@ -159,6 +159,7 @@
     <ClInclude Include="QueryPool.h" />
     <ClInclude Include="QueueFamilyIndices.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Sampler.h" />
     <ClInclude Include="Semaphore.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderCompiler.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="PipelineLayout.cpp" />
     <ClCompile Include="QueryPool.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />

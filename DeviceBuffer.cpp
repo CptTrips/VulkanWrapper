@@ -5,16 +5,14 @@
 DeviceBuffer::DeviceBuffer(Device& device)
     : device(device)
     , buffer()
-    , memory()
-    , _size(0)
+    , memory(device.vk())
 {
 }
 
 DeviceBuffer::DeviceBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, Device& device)
     : device(device)
     , buffer()
-    , memory()
-    , _size(size)
+    , memory(device.vk())
 {
 
 	VkBufferCreateInfo bufferInfo{};
@@ -30,16 +28,9 @@ DeviceBuffer::DeviceBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemory
     VkMemoryRequirements memRequirements;
     vkGetBufferMemoryRequirements(device.vk(), buffer, &memRequirements);
 
-    VkMemoryAllocateInfo allocInfo{};
-    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = device.findMemoryType(memRequirements.memoryTypeBits, properties);
+    memory = DeviceMemory(device, memRequirements, properties);
 
-    if (vkAllocateMemory(device.vk(), &allocInfo, nullptr, &memory) != VK_SUCCESS) {
-        throw std::runtime_error("failed to allocate buffer memory!");
-    }
-
-    vkBindBufferMemory(device.vk(), buffer, memory, 0);
+    vkBindBufferMemory(device.vk(), buffer, memory.vk(), 0);
 }
 
 DeviceBuffer::DeviceBuffer(DeviceBuffer&& other) noexcept
@@ -61,17 +52,12 @@ DeviceBuffer::~DeviceBuffer()
 {
 
 	vkDestroyBuffer(device.vk(), buffer, nullptr);
-    vkFreeMemory(device.vk(), memory, nullptr);
 }
 
 void DeviceBuffer::fill(void* data)
 {
 
-	void* deviceData;
-
-	vkMapMemory(device.vk(), memory, 0, _size, 0, &deviceData);
-	memcpy(deviceData, data, static_cast<size_t>(_size));
-	vkUnmapMemory(device.vk(), memory);
+    memory.fill(data);
 }
 
 void DeviceBuffer::copy(DeviceBuffer& src)
@@ -82,7 +68,7 @@ void DeviceBuffer::copy(DeviceBuffer& src)
 	VkBufferCopy copyRegion{};
 	copyRegion.srcOffset = 0; // Optional
 	copyRegion.dstOffset = 0; // Optional
-	copyRegion.size = _size;
+	copyRegion.size = memory.size();
 	vkCmdCopyBuffer(commandBuffer.vk(), src.buffer, buffer, 1, &copyRegion);
 
     device.submitCommandBuffer(commandBuffer);
@@ -93,7 +79,7 @@ void DeviceBuffer::copy(DeviceBuffer& src)
 void DeviceBuffer::upload(void* data)
 {
 
-    DeviceBuffer stagingBuffer(_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, device);
+    DeviceBuffer stagingBuffer(memory.size(), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, device);
 
     stagingBuffer.fill(data);
 
@@ -109,7 +95,19 @@ VkBuffer DeviceBuffer::vk() const
 VkDeviceSize DeviceBuffer::size() const
 {
 
-    return _size;
+    return memory.size();
+}
+
+VkDescriptorBufferInfo DeviceBuffer::bufferInfo() const
+{
+
+    VkDescriptorBufferInfo bufferInfo{};
+
+    bufferInfo.buffer = buffer;
+    bufferInfo.offset = 0;
+    bufferInfo.range = size();
+
+    return bufferInfo;
 }
 
 void swap(DeviceBuffer& a, DeviceBuffer& b) noexcept
@@ -117,6 +115,5 @@ void swap(DeviceBuffer& a, DeviceBuffer& b) noexcept
 
     swap(a.device, b.device);
     std::swap(a.buffer, b.buffer);
-    std::swap(a.memory, b.memory);
-    std::swap(a._size, b._size);
+    swap(a.memory, b.memory);
 }

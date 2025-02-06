@@ -4,14 +4,14 @@
 
 #include "Device.h"
 #include "CommandBuffer.h"
+#include "DeviceMemory.h"
 
 class DeviceBuffer
 {
     
 	Device& device;
 	VkBuffer buffer;
-	VkDeviceMemory memory;
-	VkDeviceSize _size;
+	DeviceMemory memory;
 
 	DeviceBuffer(Device& device);
 
@@ -40,5 +40,7 @@ public:
 	VkBuffer vk() const;
 
 	VkDeviceSize size() const;
+
+	VkDescriptorBufferInfo bufferInfo() const;
 };
 

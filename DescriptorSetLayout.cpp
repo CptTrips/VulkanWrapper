@@ -21,6 +21,17 @@ DescriptorSetLayout::DescriptorSetLayout(const Device& device, const std::vector
 	if (vkCreateDescriptorSetLayout(device.vk(), &layoutInfo, nullptr, &layout) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create descriptor set layout!");
 	}
+
+	for (VkDescriptorSetLayoutBinding binding : bindings)
+	{
+
+		typeCounts[binding.descriptorType]++;
+
+		if (bindingMap.count(binding.binding))
+			throw std::runtime_error("duplicate binding");
+
+		bindingMap[binding.binding] = binding;
+	}
 }
 
 DescriptorSetLayout::DescriptorSetLayout(DescriptorSetLayout&& other) noexcept
@@ -47,6 +58,18 @@ DescriptorSetLayout::~DescriptorSetLayout()
 VkDescriptorSetLayout DescriptorSetLayout::vk() const
 {
     return layout;
+}
+
+std::unordered_map<VkDescriptorType, uint32_t> DescriptorSetLayout::getTypeCounts() const
+{
+
+	return typeCounts;
+}
+
+VkDescriptorSetLayoutBinding DescriptorSetLayout::getBinding(uint32_t binding)
+{
+
+	return bindingMap[binding];
 }
 
 void swap(DescriptorSetLayout& a, DescriptorSetLayout& b) noexcept

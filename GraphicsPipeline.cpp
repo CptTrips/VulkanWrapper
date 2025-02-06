@@ -8,7 +8,8 @@
 GraphicsPipeline::GraphicsPipeline(Device& device, const VertexShader& vertexShader, const Shader& fragmentShader, VkFormat colourFormat, VkPrimitiveTopology topology)
     : device(device.vk())
     , pipeline()
-    , pipelineLayout(device, {&vertexShader, &fragmentShader})
+	, descriptorSetLayout(device, concatVectors(vertexShader.bindings, fragmentShader.bindings))
+	, pipelineLayout(device, { descriptorSetLayout.vk()}, {})
 {
 
 	VkPipelineRenderingCreateInfo pipelineRenderingCreateInfo{};
@@ -122,6 +123,7 @@ GraphicsPipeline::GraphicsPipeline(Device& device, const VertexShader& vertexSha
 GraphicsPipeline::GraphicsPipeline(GraphicsPipeline&& other) noexcept
 	: device(other.device)
 	, pipeline(std::move(other.pipeline))
+	, descriptorSetLayout(std::move(other.descriptorSetLayout))
 	, pipelineLayout(std::move(other.pipelineLayout))
 {
 }
@@ -138,8 +140,14 @@ void GraphicsPipeline::bind(CommandBuffer& commandBuffer) const
 	vkCmdBindPipeline(commandBuffer.vk(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 }
 
-PipelineLayout& GraphicsPipeline::getLayout()
+PipelineLayout& GraphicsPipeline::getPipelineLayout()
 {
 
 	return pipelineLayout;
+}
+
+DescriptorSetLayout& GraphicsPipeline::getDescriptorSetLayout()
+{
+
+	return descriptorSetLayout;
 }

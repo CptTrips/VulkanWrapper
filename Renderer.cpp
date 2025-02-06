@@ -26,6 +26,8 @@ Renderer::Renderer(RendererOptions options)
 	, fragmentShader(options.fragmentShader)
 	, graphicsPipeline(device, vertexShader, fragmentShader, options.swapChainFormat)
 	, renderDomain{ options.swapChainExtent }
+	, descriptorPool(options.device, graphicsPipeline.getDescriptorSetLayout().getTypeCounts(), 100)
+	, descriptorSets(descriptorPool.makeDescriptorSets(std::vector<DescriptorSetLayout*>(1, &(graphicsPipeline.getDescriptorSetLayout()))))
 {
 
 }
@@ -48,7 +50,7 @@ std::vector<PipelineBarrier> Renderer::createPipelineBarriers() const
 	return pipelineBarriers;
 }
 
-void Renderer::recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, DeviceBuffer& vertexBuffer, DeviceBuffer& indexBuffer, const Image & image, const std::vector<DescriptorSet>& descriptorSets)
+void Renderer::recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, DeviceBuffer& vertexBuffer, DeviceBuffer& indexBuffer, const Image & image, uint32_t descriptorSetIndex)
 {
 
 	pipelineBarriers[0].layoutTransition(commandBuffer, image);
@@ -59,7 +61,7 @@ void Renderer::recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, Device
 
 	bindObjects(commandBuffer, vertexBuffer, indexBuffer);
 
-	bindDescriptorSets(commandBuffer, descriptorSets);
+	bindDescriptorSets(commandBuffer, {descriptorSets[descriptorSetIndex]});
 
 	setDomain(commandBuffer, renderDomain);
 
@@ -68,6 +70,25 @@ void Renderer::recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, Device
 	vkCmdEndRendering(commandBuffer.vk());
 
 	pipelineBarriers[1].layoutTransition(commandBuffer, image);
+}
+
+void Renderer::updateDescriptorSet(uint32_t descriptorSetIndex, uint32_t binding, std::vector<VkDescriptorImageInfo> imageInfos, std::vector<VkDescriptorBufferInfo> bufferInfos)
+{
+
+	VkWriteDescriptorSet descriptorWrite{};
+
+	DescriptorSetLayout& descriptorSetLayout{ graphicsPipeline.getDescriptorSetLayout() };
+
+    descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrite.dstSet = descriptorSets[descriptorSetIndex].vk();
+    descriptorWrite.dstBinding = binding;
+    descriptorWrite.dstArrayElement = 0;
+    descriptorWrite.descriptorType = descriptorSetLayout.getBinding(binding).descriptorType;
+    descriptorWrite.descriptorCount = descriptorSetLayout.getBinding(binding).descriptorCount;
+    descriptorWrite.pBufferInfo = (bufferInfos.size()) ? bufferInfos.data() : nullptr;
+    descriptorWrite.pImageInfo = (imageInfos.size()) ? imageInfos.data() : nullptr;
+
+	vkUpdateDescriptorSets(device.vk(), 1, &descriptorWrite, 0, nullptr);
 }
 
 void Renderer::bindDescriptorSets(CommandBuffer& commandBuffer, const std::vector<DescriptorSet>& descriptorSets)
@@ -80,7 +101,7 @@ void Renderer::bindDescriptorSets(CommandBuffer& commandBuffer, const std::vecto
 
 	std::transform(descriptorSets.begin(), descriptorSets.end(), descriptorSetsVk.begin(), [](const DescriptorSet& descriptorSet) { return descriptorSet.vk();  });
 
-	vkCmdBindDescriptorSets(commandBuffer.vk(), VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getLayout().vk(), 0, descriptorSetsVk.size(), descriptorSetsVk.data(), 0, nullptr);
+	vkCmdBindDescriptorSets(commandBuffer.vk(), VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getPipelineLayout().vk(), 0, descriptorSetsVk.size(), descriptorSetsVk.data(), 0, nullptr);
 }
 
 void Renderer::beginRendering(CommandBuffer & commandBuffer, const Image & image, VkRect2D renderDomain) const
