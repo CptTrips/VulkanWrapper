@@ -19,7 +19,6 @@ Renderer::Renderer(RendererOptions options)
 	: device(options.device)
 	, QUEUE_SIZE(options.queueSize)
 	, pipelineBarriers(createPipelineBarriers())
-	, uiRenderer({ options.window, device, options.instance, options.swapChainFormat, options.swapChainSize })
 	, vertexShader(options.vertexShader)
 	, fragmentShader(options.fragmentShader)
 	, graphicsPipeline(device, vertexShader, fragmentShader, options.swapChainFormat)
@@ -46,20 +45,26 @@ std::vector<PipelineBarrier> Renderer::createPipelineBarriers() const
 	return pipelineBarriers;
 }
 
-void Renderer::recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, DeviceBuffer& vertexBuffer, DeviceBuffer& indexBuffer, const Image & image)
+void Renderer::begin(CommandBuffer& commandBuffer, const Image& image)
 {
 
 	pipelineBarriers[0].layoutTransition(commandBuffer, image);
 
 	beginRendering(commandBuffer, image, VkRect2D{{0, 0}, renderDomain});
+}
 
-	uiRenderer.render(commandBuffer, ui);
+void Renderer::draw(CommandBuffer& commandBuffer, DeviceBuffer& vertexBuffer, DeviceBuffer& indexBuffer)
+{
 
 	bindObjects(commandBuffer, vertexBuffer, indexBuffer);
 
 	setDomain(commandBuffer, renderDomain);
 
 	drawIndexed(commandBuffer, static_cast<uint32_t>(indexBuffer.size() / sizeof(uint32_t)));
+}
+
+void Renderer::end(CommandBuffer& commandBuffer, const Image& image)
+{
 
 	vkCmdEndRendering(commandBuffer.vk());
 

@@ -11,8 +11,6 @@
 #include "Surface.h"
 #include "Device.h"
 #include "SwapChain.h"
-#include "UI.h"
-#include "UIRenderer.h"
 #include "PipelineBarrier.h"
 #include "Image.h"
 #include "GraphicsPipeline.h"
@@ -79,8 +77,6 @@ private:
 
     const std::vector<PipelineBarrier> pipelineBarriers;
 
-    UIRenderer uiRenderer;
-
     VertexShader& vertexShader;
     FragmentShader& fragmentShader;
 
@@ -104,6 +100,11 @@ public:
 
     Renderer(RendererOptions options);
 
-    void recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, DeviceBuffer& vertexBuffer, DeviceBuffer& indexBuffer, const Image & image);
+    void begin(CommandBuffer& commandBuffer, const Image & image);
+
+    void draw(CommandBuffer& commandBuffer, DeviceBuffer& vertexBuffer, DeviceBuffer& indexBuffer);
+
+    void end(CommandBuffer& commandBuffer, const Image & image);
+
 };
 
