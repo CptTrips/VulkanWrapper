@@ -12,7 +12,7 @@ class VulkanContext
     static const std::vector<const char*> deviceExtensions;
 
 public:
-    VulkanContext();
+    VulkanContext(uint32_t windowHeight, uint32_t windowWidth);
 
     GLFWWindow window;
 
