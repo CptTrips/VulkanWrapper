@@ -11,8 +11,8 @@ const std::vector<const char*> VulkanContext::deviceExtensions = {
 	VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 
-VulkanContext::VulkanContext()
-    : window(600, 800, false)
+VulkanContext::VulkanContext(uint32_t windowHeight, uint32_t windowWidth)
+    : window(windowHeight, windowWidth, false)
 	, instance(window.extensions(), layers)
 	, surface(instance.vk(), window.window)
 	, device(instance.vk(), surface.getVkSurface(), deviceExtensions, layers)
