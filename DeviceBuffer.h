@@ -31,11 +31,11 @@ public:
 
 	friend void swap(DeviceBuffer& a, DeviceBuffer& b) noexcept;
 
-	void fill(void* data);
+	void fill(const void* data);
 
 	void copy(DeviceBuffer& src);
 
-	void upload(void* data);
+	void upload(const void* data);
 
 	VkBuffer vk() const;
 

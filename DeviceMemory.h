@@ -27,7 +27,7 @@ public:
 
     ~DeviceMemory();
 
-    void fill(void* data);
+    void fill(const void* data);
 
     VkDeviceSize size() const;
 

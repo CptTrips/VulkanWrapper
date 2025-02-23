@@ -44,7 +44,7 @@ DeviceMemory::~DeviceMemory()
 		std::runtime_error("DeviceMemory has memory but no device");
 }
 
-void DeviceMemory::fill(void* data)
+void DeviceMemory::fill(const void* data)
 {
 
 	void* deviceData;

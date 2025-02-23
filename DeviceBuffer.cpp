@@ -54,7 +54,7 @@ DeviceBuffer::~DeviceBuffer()
 	vkDestroyBuffer(device.vk(), buffer, nullptr);
 }
 
-void DeviceBuffer::fill(void* data)
+void DeviceBuffer::fill(const void* data)
 {
 
     memory.fill(data);
@@ -76,7 +76,7 @@ void DeviceBuffer::copy(DeviceBuffer& src)
     device.graphicsQueueWaitIdle();
 }
 
-void DeviceBuffer::upload(void* data)
+void DeviceBuffer::upload(const void* data)
 {
 
     DeviceBuffer stagingBuffer(memory.size(), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, device);
