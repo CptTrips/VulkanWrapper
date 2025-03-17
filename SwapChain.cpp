@@ -62,7 +62,7 @@ SwapChain::SwapChain(Device& inDevice, VkSurfaceKHR surface, VkSurfaceFormatKHR 
 	createInfo.clipped = VK_TRUE;
 	createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-	if (vkCreateSwapchainKHR(device->vk(), &createInfo, nullptr, &swapChain) != VK_SUCCESS)
+	if (VkResult result = vkCreateSwapchainKHR(device->vk(), &createInfo, nullptr, &swapChain); result != VK_SUCCESS)
 	{
 		throw std::runtime_error("Failed to create swap chain");
 	}
