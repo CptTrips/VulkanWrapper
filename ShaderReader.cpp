@@ -8,7 +8,7 @@ ShaderReader::ShaderReader(const std::string& filePath)
 	std::ifstream file(filePath, std::ios::ate | std::ios::binary);
 
     if (!file.is_open()) {
-        throw std::runtime_error("failed to open file!");
+        throw std::runtime_error("failed to open shader file: " + filePath);
     }
 
 	size_t fileSize = (size_t) file.tellg();
