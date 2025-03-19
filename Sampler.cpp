@@ -2,9 +2,7 @@
 
 #include <stdexcept>
 
-Sampler::Sampler(const Device& device)
-    : device(device.vk())
-    , sampler()
+VkSamplerCreateInfo Sampler::makeCreateInfo(const Device& device) const
 {
 
     VkPhysicalDeviceProperties properties{};
@@ -25,6 +23,23 @@ Sampler::Sampler(const Device& device)
     createInfo.unnormalizedCoordinates = VK_FALSE;
     createInfo.compareEnable = VK_FALSE;
     createInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+
+    return createInfo;
+}
+
+Sampler::Sampler(const Device& device)
+    : device(device.vk())
+    , sampler()
+{
+
+    VkSamplerCreateInfo createInfo{ makeCreateInfo(device) };
+
+    if (vkCreateSampler(device.vk(), &createInfo, nullptr, &sampler) != VK_SUCCESS)
+        throw std::runtime_error("Failed to create texture sampler");
+}
+
+Sampler::Sampler(const Device& device, VkSamplerCreateInfo createInfo)
+{
 
     if (vkCreateSampler(device.vk(), &createInfo, nullptr, &sampler) != VK_SUCCESS)
         throw std::runtime_error("Failed to create texture sampler");

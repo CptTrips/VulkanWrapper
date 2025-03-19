@@ -7,8 +7,11 @@
 class Sampler
 {
 
+protected:
     VkDevice device;
     VkSampler sampler;
+
+    VkSamplerCreateInfo makeCreateInfo(const Device& device) const;
 
 public:
     Sampler(const Device& device);

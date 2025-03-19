@@ -10,6 +10,8 @@
 class Image
 {
 
+protected:
+
     Device& device;
 
     VkExtent3D extent;
@@ -29,9 +31,13 @@ class Image
 
     void fill(void* data);
 
+    void create(VkImageCreateInfo createInfo);
+
 public:
 
     friend void swap(Image& a, Image& b);
+
+    Image(Device& device, VkImageCreateInfo createInfo);
 
     Image(
         uint32_t width,
@@ -59,9 +65,11 @@ public:
 
     ~Image();
 
-    void copyBuffer(const DeviceBuffer& buffer);
+    void copyBuffer(const DeviceBuffer& buffer, VkImageAspectFlags aspectMask);
 
     void upload(void* data);
+
+    void upload(void* data, VkDeviceSize size, VkImageAspectFlags aspectMask);
 
     VkDescriptorImageInfo imageInfo() const;
 

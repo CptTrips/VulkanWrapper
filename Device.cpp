@@ -362,10 +362,15 @@ VkDevice Device::createDevice(const std::vector<const char*>& deviceExtensions, 
 	vk13Features.dynamicRendering = VK_TRUE;
 	vk13Features.synchronization2 = VK_TRUE;
 
+	VkPhysicalDeviceVulkan11Features vk11Features{};
+	vk11Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
+	vk11Features.samplerYcbcrConversion = VK_TRUE;
+	vk11Features.pNext = &vk13Features;
+
 	VkPhysicalDeviceFeatures2 deviceFeatures2{};
 	deviceFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
 	deviceFeatures2.features = deviceFeatures;
-	deviceFeatures2.pNext = &vk13Features;
+	deviceFeatures2.pNext = &vk11Features;
 
 	VkDeviceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;

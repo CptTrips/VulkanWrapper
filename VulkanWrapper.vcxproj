@@ -154,6 +154,7 @@
     <ClInclude Include="GraphicsPipeline.h" />
     <ClInclude Include="GraphicsPipelineBuilder.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="ImageBuilder.h" />
     <ClInclude Include="PipelineBarrier.h" />
     <ClInclude Include="PipelineLayout.h" />
     <ClInclude Include="QueryPool.h" />
@@ -174,6 +175,8 @@
     <ClInclude Include="VulkanContext.h" />
     <ClInclude Include="VulkanDebugMessenger.h" />
     <ClInclude Include="VulkanInstance.h" />
+    <ClInclude Include="YUVImage.h" />
+    <ClInclude Include="YUVSampler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandBuffer.cpp" />
@@ -195,6 +198,7 @@
     <ClCompile Include="GraphicsPipeline.cpp" />
     <ClCompile Include="GraphicsPipelineBuilder.cpp" />
     <ClCompile Include="Image.cpp" />
+    <ClCompile Include="ImageBuilder.cpp" />
     <ClCompile Include="PipelineBarrier.cpp" />
     <ClCompile Include="PipelineLayout.cpp" />
     <ClCompile Include="QueryPool.cpp" />
@@ -213,6 +217,8 @@
     <ClCompile Include="VulkanContext.cpp" />
     <ClCompile Include="VulkanDebugMessenger.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
+    <ClCompile Include="YUVImage.cpp" />
+    <ClCompile Include="YUVSampler.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

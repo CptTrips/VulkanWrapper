@@ -22,6 +22,19 @@ void Image::createImageView(VkFormat format)
         throw std::runtime_error("failed to create texture image view!");
 }
 
+Image::Image(Device& device, VkImageCreateInfo createInfo)
+	: device(device)
+	, extent(createInfo.extent)
+	, image()
+	, imageView()
+	, sampler(device)
+	, wasCreated(true)
+	, memory(device.vk())
+{
+
+	create(createInfo);
+}
+
 Image::Image(
 	uint32_t width,
 	uint32_t height,
@@ -53,15 +66,8 @@ Image::Image(
 	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 	imageInfo.flags = 0; // Optional
-	if (vkCreateImage(device.vk(), &imageInfo, nullptr, &image) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create image!");
-	}
 
-	memory = DeviceMemory(device, getMemoryRequirements(), VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-
-	bindMemory(memory);
-
-	createImageView(format);
+	create(imageInfo);
 }
 
 Image::Image(Device& device, VkImage image, VkFormat format)
@@ -133,7 +139,7 @@ Image::~Image()
 		vkDestroyImage(device.vk(), image, nullptr);
 }
 
-void Image::copyBuffer(const DeviceBuffer& buffer)
+void Image::copyBuffer(const DeviceBuffer& buffer, VkImageAspectFlags aspectMask)
 {
 
 	CommandBuffer commandBuffer{ device.makeSingleUseCommandBuffer() };
@@ -158,7 +164,7 @@ void Image::copyBuffer(const DeviceBuffer& buffer)
     region.bufferRowLength = 0;
     region.bufferImageHeight = 0;
 
-	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	region.imageSubresource.aspectMask = aspectMask;
     region.imageSubresource.mipLevel = 0;
     region.imageSubresource.baseArrayLayer = 0;
     region.imageSubresource.layerCount = 1;
@@ -176,11 +182,17 @@ void Image::copyBuffer(const DeviceBuffer& buffer)
 void Image::upload(void* data)
 {
 
-    DeviceBuffer stagingBuffer(extent.height * extent.width * extent.depth * 4, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, device);
+	upload(data, extent.height * extent.width * extent.depth * 4, VK_IMAGE_ASPECT_COLOR_BIT);
+}
+
+void Image::upload(void* data, VkDeviceSize size, VkImageAspectFlags aspectMask)
+{
+
+    DeviceBuffer stagingBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, device);
 
     stagingBuffer.fill(data);
 
-    copyBuffer(stagingBuffer);
+    copyBuffer(stagingBuffer, aspectMask);
 }
 
 VkDescriptorImageInfo Image::imageInfo() const
@@ -199,6 +211,20 @@ void Image::fill(void* data)
 {
 
 	memory.fill(data);
+}
+
+void Image::create(VkImageCreateInfo createInfo)
+{
+
+	if (vkCreateImage(device.vk(), &createInfo, nullptr, &image) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create image!");
+	}
+
+	memory = DeviceMemory(device, getMemoryRequirements(), VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+	bindMemory(memory);
+
+	createImageView(createInfo.format);
 }
 
 void swap(Image& a, Image& b)
