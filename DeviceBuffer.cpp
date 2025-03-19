@@ -12,6 +12,7 @@ DeviceBuffer::DeviceBuffer(Device& device)
 DeviceBuffer::DeviceBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, Device& device)
     : device(device)
     , buffer()
+    , bufferSize(size)
     , memory(device.vk())
 {
 
@@ -68,7 +69,7 @@ void DeviceBuffer::copy(DeviceBuffer& src)
 	VkBufferCopy copyRegion{};
 	copyRegion.srcOffset = 0; // Optional
 	copyRegion.dstOffset = 0; // Optional
-	copyRegion.size = memory.size();
+	copyRegion.size = size();
 	vkCmdCopyBuffer(commandBuffer.vk(), src.buffer, buffer, 1, &copyRegion);
 
     device.submitCommandBuffer(commandBuffer);
@@ -95,7 +96,7 @@ VkBuffer DeviceBuffer::vk() const
 VkDeviceSize DeviceBuffer::size() const
 {
 
-    return memory.size();
+    return bufferSize;
 }
 
 VkDescriptorBufferInfo DeviceBuffer::bufferInfo() const

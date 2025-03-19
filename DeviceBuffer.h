@@ -11,6 +11,7 @@ class DeviceBuffer
     
 	Device& device;
 	VkBuffer buffer;
+	VkDeviceSize bufferSize;
 	DeviceMemory memory;
 
 	DeviceBuffer(Device& device);
