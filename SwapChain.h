@@ -20,6 +20,7 @@ struct SwapChainOptions
     uint32_t imageCount;
     VkSurfaceTransformFlagBitsKHR preTransform;
     QueueFamilyIndices indices;
+    VkSwapchainKHR oldSwapChain;
 };
 
 // Manages an array of image data which will be drawn to by the render process and sent to the display
@@ -33,7 +34,7 @@ class SwapChain
     VkFormat format;
     VkExtent2D extent;
 
-    SwapChainOptions makeSwapChainOptions(Device& device, VkSurfaceKHR surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode, uint32_t imageCount) const;
+    SwapChainOptions makeSwapChainOptions(Device& device, VkSurfaceKHR surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode, uint32_t imageCount, VkSwapchainKHR oldSwapChain) const;
 
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) const;
 
@@ -45,11 +46,11 @@ class SwapChain
 
 public:
 
-    SwapChain(Device& device, const Surface& surface, const GLFWWindow& window, uint32_t imageCount, VkPresentModeKHR preferredPresentMode = VK_PRESENT_MODE_FIFO_KHR);
+    SwapChain(Device& device, const Surface& surface, const GLFWWindow& window, uint32_t imageCount, VkPresentModeKHR preferredPresentMode = VK_PRESENT_MODE_FIFO_KHR, VkSwapchainKHR oldSwapChain = VK_NULL_HANDLE);
 
     SwapChain(Device& device, SwapChainOptions options);
 
-    SwapChain(Device& device, VkSurfaceKHR surface, VkSurfaceFormatKHR surfaceFormat, VkExtent2D extent, VkPresentModeKHR presentMode, uint32_t imageCount, VkSurfaceTransformFlagBitsKHR preTransform, QueueFamilyIndices indices);
+    SwapChain(Device& device, VkSurfaceKHR surface, VkSurfaceFormatKHR surfaceFormat, VkExtent2D extent, VkPresentModeKHR presentMode, uint32_t imageCount, VkSurfaceTransformFlagBitsKHR preTransform, QueueFamilyIndices indices, VkSwapchainKHR oldSwapChain);
 
     SwapChain(const SwapChain&) = delete;
 
@@ -72,5 +73,9 @@ public:
     void queueImage(uint32_t imageIndex, std::vector<VkSemaphore> waitSemaphores);
 
     size_t getImageCount() const;
+
+    VkSwapchainKHR vk() const;
+
+    //void recreate(const Surface& surface, const GLFWWindow& window, uint32_t imageCount, VkPresentModeKHR preferredPresentMode = VK_PRESENT_MODE_FIFO_KHR);
 };
 

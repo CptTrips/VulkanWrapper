@@ -210,3 +210,9 @@ void swap(Image& a, Image& b)
 	swap(a.memory, b.memory);
 	std::swap(a.wasCreated, b.wasCreated);
 }
+
+VkExtent3D Image::getExtent() const
+{
+
+	return extent;
+}

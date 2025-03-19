@@ -16,17 +16,17 @@ void SwapChain::acquireSwapChainImages()
 }
 
 
-SwapChain::SwapChain(Device& device, const Surface& surface, const GLFWWindow& window, uint32_t imageCount, VkPresentModeKHR preferredPresentMode)
-	: SwapChain(device, makeSwapChainOptions(device, surface.getVkSurface(), window, preferredPresentMode, imageCount))
+SwapChain::SwapChain(Device& device, const Surface& surface, const GLFWWindow& window, uint32_t imageCount, VkPresentModeKHR preferredPresentMode, VkSwapchainKHR oldSwapChain)
+	: SwapChain(device, makeSwapChainOptions(device, surface.getVkSurface(), window, preferredPresentMode, imageCount, oldSwapChain))
 {
 }
 
 SwapChain::SwapChain(Device& device, SwapChainOptions options)
-	: SwapChain(device, options.surface, options.surfaceFormat, options.extent, options.presentMode, options.imageCount, options.preTransform, options.indices)
+	: SwapChain(device, options.surface, options.surfaceFormat, options.extent, options.presentMode, options.imageCount, options.preTransform, options.indices, options.oldSwapChain)
 {
 }
 
-SwapChain::SwapChain(Device& inDevice, VkSurfaceKHR surface, VkSurfaceFormatKHR surfaceFormat, VkExtent2D extent, VkPresentModeKHR presentMode, uint32_t imageCount, VkSurfaceTransformFlagBitsKHR preTransform, QueueFamilyIndices indices)
+SwapChain::SwapChain(Device& inDevice, VkSurfaceKHR surface, VkSurfaceFormatKHR surfaceFormat, VkExtent2D extent, VkPresentModeKHR presentMode, uint32_t imageCount, VkSurfaceTransformFlagBitsKHR preTransform, QueueFamilyIndices indices, VkSwapchainKHR oldSwapChain)
 	: device(&inDevice)
 	, presentQueue(inDevice.getPresentQueue())
 	, format(surfaceFormat.format)
@@ -60,7 +60,7 @@ SwapChain::SwapChain(Device& inDevice, VkSurfaceKHR surface, VkSurfaceFormatKHR 
 	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 	createInfo.presentMode = presentMode;
 	createInfo.clipped = VK_TRUE;
-	createInfo.oldSwapchain = VK_NULL_HANDLE;
+	createInfo.oldSwapchain = oldSwapChain;
 
 	if (VkResult result = vkCreateSwapchainKHR(device->vk(), &createInfo, nullptr, &swapChain); result != VK_SUCCESS)
 	{
@@ -162,7 +162,7 @@ size_t SwapChain::getImageCount() const
 	return images.size();
 }
 
-SwapChainOptions SwapChain::makeSwapChainOptions(Device& device, VkSurfaceKHR surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode, uint32_t imageCount) const
+SwapChainOptions SwapChain::makeSwapChainOptions(Device& device, VkSurfaceKHR surface, const GLFWWindow& window, VkPresentModeKHR preferredPresentMode, uint32_t imageCount, VkSwapchainKHR oldSwapChain) const
 {
 
 	SwapChainOptions options;
@@ -188,6 +188,8 @@ SwapChainOptions SwapChain::makeSwapChainOptions(Device& device, VkSurfaceKHR su
 	options.preTransform = swapChainSupport.capabilities.currentTransform;
 
 	options.surface = surface;
+
+	options.oldSwapChain = oldSwapChain;
 
 	return options;
 }
@@ -238,4 +240,10 @@ VkExtent2D SwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilit
 
 		return actualExtent;
 	}
+}
+
+VkSwapchainKHR SwapChain::vk() const
+{
+
+	return swapChain;
 }

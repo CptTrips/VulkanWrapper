@@ -64,5 +64,7 @@ public:
     void upload(void* data);
 
     VkDescriptorImageInfo imageInfo() const;
+
+    VkExtent3D getExtent() const;
 };
 
