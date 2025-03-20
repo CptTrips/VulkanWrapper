@@ -53,7 +53,7 @@ std::vector<PipelineBarrier> Renderer::createPipelineBarriers() const
 void Renderer::recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, DeviceBuffer& vertexBuffer, DeviceBuffer& indexBuffer, const Image & image, uint32_t descriptorSetIndex)
 {
 
-	pipelineBarriers[0].layoutTransition(commandBuffer, image);
+	pipelineBarriers[0].layoutTransition(commandBuffer, image.vk());
 
 	beginRendering(commandBuffer, image, VkRect2D{{0, 0}, renderDomain});
 
@@ -69,7 +69,7 @@ void Renderer::recordRenderCommands(CommandBuffer& commandBuffer, UI& ui, Device
 
 	vkCmdEndRendering(commandBuffer.vk());
 
-	pipelineBarriers[1].layoutTransition(commandBuffer, image);
+	pipelineBarriers[1].layoutTransition(commandBuffer, image.vk());
 }
 
 void Renderer::updateDescriptorSet(uint32_t descriptorSetIndex, uint32_t binding, std::vector<VkDescriptorImageInfo> imageInfos, std::vector<VkDescriptorBufferInfo> bufferInfos)

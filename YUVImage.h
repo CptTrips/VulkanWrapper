@@ -1,14 +1,14 @@
 #pragma once
-#include "Image.h"
+#include "AbstractImage.h"
 #include "YUVSampler.h"
 
-class YUVImage :
-    public Image
+class YUVImage : public AbstractImage
 {
 
-    const YUVSampler* sampler;
+    virtual VkImageViewCreateInfo makeImageViewCreateInfo(VkFormat format) override;
 
-    VkImageCreateInfo makeCreateInfo(
+    /*
+    VkImageCreateInfo makeImageCreateInfo(
         uint32_t width,
         uint32_t height,
         uint32_t mipLevels,
@@ -17,9 +17,10 @@ class YUVImage :
         VkImageUsageFlags usage,
         const YUVSampler* sampler
     ) const;
+    */
 
 public:
-    friend void swap(YUVImage& a, YUVImage& b);
+    //friend void swap(YUVImage& a, YUVImage& b);
 
     YUVImage(
         uint32_t width,
@@ -32,13 +33,10 @@ public:
         Device& device
     );
 
-
     YUVImage(const YUVImage&) = delete;
 
     YUVImage(YUVImage&& other) noexcept;
 
     YUVImage& operator=(YUVImage other) noexcept;
-
-    VkDescriptorImageInfo imageInfo() const;
 };
 

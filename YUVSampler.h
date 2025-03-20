@@ -7,10 +7,10 @@ class YUVSampler :
     VkSamplerYcbcrConversion yuvConversion;
     VkSamplerYcbcrConversionInfo yuvConversionInfo;
 
-    VkSamplerCreateInfo makeSamplerCreateInfo(const Device& device);
+    VkSamplerCreateInfo makeSamplerCreateInfo(const Device& device, VkFormat format);
 
 public:
-    YUVSampler(const Device& device);
+    YUVSampler(const Device& device, VkFormat format);
 
     YUVSampler(const YUVSampler&) = delete;
 

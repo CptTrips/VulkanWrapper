@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AbstractImage.h" />
     <ClInclude Include="CommandBuffer.h" />
     <ClInclude Include="CommandPool.h" />
     <ClInclude Include="ComputePipeline.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="YUVSampler.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AbstractImage.cpp" />
     <ClCompile Include="CommandBuffer.cpp" />
     <ClCompile Include="CommandPool.cpp" />
     <ClCompile Include="ComputePipeline.cpp" />

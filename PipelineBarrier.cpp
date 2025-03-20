@@ -6,7 +6,7 @@ PipelineBarrier::PipelineBarrier(PipelineStage before, PipelineStage after)
 {
 }
 
-void PipelineBarrier::layoutTransition(CommandBuffer& commandBuffer, const Image& image) const
+void PipelineBarrier::layoutTransition(CommandBuffer& commandBuffer, VkImage image) const
 {
 
 	VkImageMemoryBarrier barrier{};
@@ -17,7 +17,7 @@ void PipelineBarrier::layoutTransition(CommandBuffer& commandBuffer, const Image
 	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	barrier.srcAccessMask = before.accessFlags;
 	barrier.dstAccessMask = after.accessFlags;
-	barrier.image = image.vk();
+	barrier.image = image;
 	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	barrier.subresourceRange.baseMipLevel = 0;
 	barrier.subresourceRange.levelCount = 1;

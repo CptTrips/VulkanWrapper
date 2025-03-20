@@ -1,14 +1,16 @@
 #include "YUVImage.h"
 
 YUVImage::YUVImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, const YUVSampler* sampler, Device& device)
-    : Image(device, nullptr, makeCreateInfo(width, height, mipLevels, format, tiling, usage, sampler))
-    , sampler(sampler)
+    : AbstractImage(device, makeImageCreateInfo(width, height, mipLevels, format, tiling, usage), sampler)
 {
+
+	VkImageViewCreateInfo imageViewCreateInfo{ makeImageViewCreateInfo(format) };
+
+    createImageView(imageViewCreateInfo);
 }
 
 YUVImage::YUVImage(YUVImage&& other) noexcept
-    : Image(static_cast<Image&&>(other))
-    , sampler()
+    : AbstractImage(static_cast<AbstractImage&&>(other))
 {
 
 }
@@ -21,30 +23,24 @@ YUVImage& YUVImage::operator=(YUVImage other) noexcept
     return *this;
 }
 
-VkImageCreateInfo YUVImage::makeCreateInfo(uint32_t width, uint32_t height, uint32_t mipLevels, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, const YUVSampler* sampler) const
+VkImageViewCreateInfo YUVImage::makeImageViewCreateInfo(VkFormat format)
 {
 
-    VkImageCreateInfo createInfo{ Image::makeCreateInfo(width, height, mipLevels, format, tiling, usage) };
+    VkImageViewCreateInfo createInfo{ AbstractImage::makeImageViewCreateInfo(format) };
 
-    createInfo.pNext = sampler->getYUVConversionInfo();
+    createInfo.pNext = static_cast<const YUVSampler*>(sampler)->getYUVConversionInfo();
 
     return createInfo;
 }
 
-VkDescriptorImageInfo YUVImage::imageInfo() const
-{
-    
-    VkDescriptorImageInfo imageInfo{ Image::imageInfo() };
-
-    imageInfo.sampler = sampler->vk();
-
-    return imageInfo;
-}
-
-void swap(YUVImage& a, YUVImage& b)
+/*
+VkImageCreateInfo YUVImage::makeImageCreateInfo(uint32_t width, uint32_t height, uint32_t mipLevels, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, const YUVSampler* sampler) const
 {
 
-    swap(static_cast<Image&>(a), static_cast<Image&>(b));
+    VkImageCreateInfo createInfo{ AbstractImage::makeImageCreateInfo(width, height, mipLevels, format, tiling, usage) };
 
-    // prolly should swap the samplers too
+    //createInfo.pNext = sampler->getYUVConversionInfo();
+
+    return createInfo;
 }
+*/
