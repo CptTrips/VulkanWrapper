@@ -17,5 +17,7 @@ public:
     YUVSampler& operator=(const YUVSampler&) = delete;
 
     ~YUVSampler();
+
+    const VkSamplerYcbcrConversionInfo* getYUVConversionInfo() const;
 };
 

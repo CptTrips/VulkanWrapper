@@ -22,12 +22,12 @@ void Image::createImageView(VkFormat format)
         throw std::runtime_error("failed to create texture image view!");
 }
 
-Image::Image(Device& device, VkImageCreateInfo createInfo)
+Image::Image(Device& device, const Sampler* sampler, VkImageCreateInfo createInfo)
 	: device(device)
 	, extent(createInfo.extent)
 	, image()
 	, imageView()
-	, sampler(device)
+	, sampler(sampler)
 	, wasCreated(true)
 	, memory(device.vk())
 {
@@ -42,39 +42,26 @@ Image::Image(
 	VkFormat format,
 	VkImageTiling tiling,
 	VkImageUsageFlags usage,
+	const Sampler* sampler,
     Device& device
 )
 	: device(device)
 	, extent{ width, height, 1 }
 	, image()
 	, imageView()
-	, sampler(device)
+	, sampler(sampler)
 	, wasCreated(true)
 	, memory(device.vk())
 {
 
-	VkImageCreateInfo imageInfo{};
-	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	imageInfo.imageType = VK_IMAGE_TYPE_2D;
-	imageInfo.extent = extent;
-	imageInfo.mipLevels = mipLevels;
-	imageInfo.arrayLayers = 1;
-	imageInfo.format = format;
-	imageInfo.tiling = tiling;
-	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	imageInfo.usage = usage;
-	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-	imageInfo.flags = 0; // Optional
-
-	create(imageInfo);
+	create(makeCreateInfo(width, height, mipLevels, format, tiling, usage));
 }
 
 Image::Image(Device& device, VkImage image, VkFormat format)
 	: device(device)
     , image(image)
 	, imageView()
-	, sampler(device)
+	, sampler()
 	, wasCreated(false)
 	, memory(device.vk())
 {
@@ -86,7 +73,7 @@ Image::Image(Image&& other) noexcept
 	: device(other.device)
 	, image()
 	, imageView()
-	, sampler(other.device)
+	, sampler()
 	, wasCreated(false)
 	, memory(other.device.vk())
 {
@@ -202,7 +189,7 @@ VkDescriptorImageInfo Image::imageInfo() const
 
 	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 	imageInfo.imageView = imageView;
-	imageInfo.sampler = sampler.vk();
+	imageInfo.sampler = (sampler) ? sampler->vk() : VK_NULL_HANDLE;
 
     return imageInfo;
 }
@@ -225,6 +212,26 @@ void Image::create(VkImageCreateInfo createInfo)
 	bindMemory(memory);
 
 	createImageView(createInfo.format);
+}
+
+VkImageCreateInfo Image::makeCreateInfo(uint32_t width, uint32_t height, uint32_t mipLevels, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage) const
+{
+
+	VkImageCreateInfo imageInfo{};
+	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	imageInfo.imageType = VK_IMAGE_TYPE_2D;
+	imageInfo.extent = extent;
+	imageInfo.mipLevels = mipLevels;
+	imageInfo.arrayLayers = 1;
+	imageInfo.format = format;
+	imageInfo.tiling = tiling;
+	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	imageInfo.usage = usage;
+	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+	imageInfo.flags = 0; // Optional
+
+	return imageInfo;
 }
 
 void swap(Image& a, Image& b)

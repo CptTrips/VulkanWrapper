@@ -132,9 +132,6 @@
     <ClInclude Include="Sampler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImageBuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="YUVImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -252,9 +249,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sampler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="YUVImage.cpp">

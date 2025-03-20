@@ -154,7 +154,6 @@
     <ClInclude Include="GraphicsPipeline.h" />
     <ClInclude Include="GraphicsPipelineBuilder.h" />
     <ClInclude Include="Image.h" />
-    <ClInclude Include="ImageBuilder.h" />
     <ClInclude Include="PipelineBarrier.h" />
     <ClInclude Include="PipelineLayout.h" />
     <ClInclude Include="QueryPool.h" />
@@ -198,7 +197,6 @@
     <ClCompile Include="GraphicsPipeline.cpp" />
     <ClCompile Include="GraphicsPipelineBuilder.cpp" />
     <ClCompile Include="Image.cpp" />
-    <ClCompile Include="ImageBuilder.cpp" />
     <ClCompile Include="PipelineBarrier.cpp" />
     <ClCompile Include="PipelineLayout.cpp" />
     <ClCompile Include="QueryPool.cpp" />

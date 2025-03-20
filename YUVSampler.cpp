@@ -48,3 +48,8 @@ YUVSampler::~YUVSampler()
 
     vkDestroySamplerYcbcrConversion(device, yuvConversion, nullptr);
 }
+
+const VkSamplerYcbcrConversionInfo* YUVSampler::getYUVConversionInfo() const
+{
+    return &yuvConversionInfo;
+}

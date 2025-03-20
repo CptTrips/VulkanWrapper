@@ -19,7 +19,7 @@ protected:
     VkImage image;
     VkImageView imageView;
 
-    Sampler sampler;
+    const Sampler* sampler;
 
     DeviceMemory memory;
 
@@ -33,11 +33,20 @@ protected:
 
     void create(VkImageCreateInfo createInfo);
 
+    VkImageCreateInfo makeCreateInfo(
+        uint32_t width,
+        uint32_t height,
+        uint32_t mipLevels,
+        VkFormat format,
+        VkImageTiling tiling,
+        VkImageUsageFlags usage
+    ) const;
+
 public:
 
     friend void swap(Image& a, Image& b);
 
-    Image(Device& device, VkImageCreateInfo createInfo);
+    Image(Device& device, const Sampler* sampler, VkImageCreateInfo createInfo);
 
     Image(
         uint32_t width,
@@ -46,6 +55,7 @@ public:
         VkFormat format,
         VkImageTiling tiling,
         VkImageUsageFlags usage,
+        const Sampler* sampler,
         Device& device
     );
 
