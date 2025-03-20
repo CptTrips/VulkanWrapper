@@ -28,6 +28,11 @@ VkSamplerCreateInfo YUVSampler::makeSamplerCreateInfo(const Device& device)
     VkSamplerCreateInfo samplerCreateInfo{makeCreateInfo(device)};
 
     samplerCreateInfo.pNext = &yuvConversionInfo;
+    samplerCreateInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerCreateInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerCreateInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerCreateInfo.anisotropyEnable = VK_FALSE;
+    samplerCreateInfo.unnormalizedCoordinates = VK_FALSE;
 
     return samplerCreateInfo;
 }
